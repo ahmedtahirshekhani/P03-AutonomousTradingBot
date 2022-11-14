@@ -1,10 +1,14 @@
-import pytest
-from uuid import uuid4
 from datetime import datetime, timedelta
-from .model import Analyst, Investor, LoginReturn
 from hashlib import sha256
+from uuid import uuid4
+
+import pytest
+
+from .model import Analyst, Investor, LoginReturn
 
 # Helper functions
+
+
 def create_analyst():
     return Analyst(
         id=str(uuid4()),
@@ -12,7 +16,8 @@ def create_analyst():
         address="Lums",
         email="ahmed@lums.com",
         phone_number="+92 333 3464655",
-        password="832598e496ec310643ff62380fadf9a7d4d91ebf59da4b39eb86af7628c53ec6",  # SHA256 hash of password
+        # SHA256 hash of password
+        password="832598e496ec310643ff62380fadf9a7d4d91ebf59da4b39eb86af7628c53ec6",
     )
 
 
@@ -96,7 +101,9 @@ def test_analyst_logout():
 
 def test_register_investor():
     new_analyst = create_analyst()
-    invester_credentials = new_analyst.register_investor()
+
+    invester_credentials = new_analyst.register_investor(
+        "Suleman", "Lums", "suleman@test.com", "+92 333 3455488")
 
     assert invester_credentials.success == True
     assert invester_credentials.message == "Investor successfully registered!"
@@ -110,7 +117,8 @@ def test_register_investor():
 
 def test_get_investor_credentials():
     new_analyst = create_analyst()
-    invester_credentials = new_analyst.register_investor()
+    invester_credentials = new_analyst.get_investor_credentials(
+        new_analyst.email)
 
     username = invester_credentials.username
     password = invester_credentials.password

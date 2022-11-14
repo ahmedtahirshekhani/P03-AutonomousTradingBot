@@ -1,8 +1,9 @@
+import json
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from hashlib import sha256
 from typing import Dict, List
 from uuid import uuid4
-
 
 """
 Use cases
@@ -32,6 +33,15 @@ class LoginReturn:
     message: str
     expiry: datetime
     token: str
+
+
+@dataclass(frozen=True)
+class InvestorRegistrationReturn:
+    success: str
+    message: str
+    investor: Dict[str, str]
+    password: str
+    username: str
 
 
 @dataclass
@@ -80,8 +90,26 @@ class Analyst:
         self.expiry = None
         self.token = None
 
-    def register_investor(self):
-        pass
+    def register_investor(self, name, address, email, phone_number) -> InvestorRegistrationReturn:
+        password = str(uuid4())
+
+        investor = Investor(
+            id=str(uuid4()),
+            name=name,
+            address=address,
+            email=email,
+            phone_number=phone_number,
+            password=str(sha256(password.encode('utf-8')).hexdigest())
+        )
+        investorDetails = investor.get_investor_details()
+        returnRegInvestor = InvestorRegistrationReturn(
+            True,
+            "Investor successfully registered!",
+            investorDetails,
+            password,
+            email
+        )
+        return returnRegInvestor
 
 
 @dataclass
@@ -98,3 +126,13 @@ class Investor:
 
     def logout(self):
         pass
+
+    def get_investor_details(self):
+        investorJson = {
+            "id": self.id,
+            "name": self.name,
+            "address": self.address,
+            "email": self.email,
+            "phone_number": self.phone_number,
+        }
+        return json.dumps(investorJson)
