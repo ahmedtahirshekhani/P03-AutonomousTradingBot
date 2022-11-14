@@ -58,7 +58,8 @@ def test_analyst_login():
     assert success_attempt.message == "User successfully logged in!"
     assert success_attempt.expiry == datetime.now() + timedelta(hours=1)
     try:
-        uuid4(success_attempt.token)  # This should not raise an exception
+        # This should not raise an exception if token is valid
+        uuid4(success_attempt.token)
     except:
         pytest.fail("Raised an exception due to invalid token")
 
