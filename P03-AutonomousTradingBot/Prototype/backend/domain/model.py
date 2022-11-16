@@ -33,7 +33,7 @@ Future upgrades
 
 @dataclass(frozen=True)
 class LoginReturn:
-    success: str
+    success: bool
     message: str
     expiry: datetime
     token: str
@@ -41,12 +41,12 @@ class LoginReturn:
 
 @dataclass
 class Investor:
-    id: str
     name: str
     address: str
     email: str
     phone_number: str
     password: str
+    id: str = str(uuid4())
     expiry: datetime = None
     token: str = None
 
@@ -62,6 +62,7 @@ class Investor:
 
         return True
 
+    # TODO: handle login rejection using exceptions
     def login(self, email: str, password: str) -> LoginReturn:
         if self.email == email and self.password == password:
             self.expiry = datetime.now() + timedelta(hours=1)
@@ -86,14 +87,16 @@ class Investor:
         self.token = None
 
 
+# Here passwords are stored in has
+# TODO: change password name to hashed_password
 @dataclass
 class Analyst:
-    id: str
     name: str
     address: str
     email: str
     phone_number: str
     password: str
+    id: str = str(uuid4())
     expiry: datetime = None
     token: str = None
 
@@ -110,7 +113,9 @@ class Analyst:
         return True
 
     def login(self, email: str, password: str) -> LoginReturn:
-        if self.email == email and self.password == password:
+        hashed_pass = str(sha256(password.encode("utf-8")).hexdigest())
+
+        if self.email == email and self.password == hashed_pass:
             self.expiry = datetime.now() + timedelta(hours=1)
             self.token = str(uuid4())
 
@@ -139,7 +144,6 @@ class Analyst:
 
         return {
             "investor": Investor(
-                id=str(uuid4()),
                 name=name,
                 address=address,
                 email=email,
