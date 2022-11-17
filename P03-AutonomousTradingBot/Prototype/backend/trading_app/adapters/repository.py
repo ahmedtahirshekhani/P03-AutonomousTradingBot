@@ -14,6 +14,10 @@ class AnalystAbstractRepository(ABC):
     def get(self, analyst_id: str) -> Analyst:
         pass
 
+    @abstractmethod
+    def save(self, analyst: Analyst):
+        pass
+
 
 class FakeAnalystRepository(AnalystAbstractRepository):
     def __init__(self):
@@ -24,6 +28,9 @@ class FakeAnalystRepository(AnalystAbstractRepository):
 
     def get(self, analyst_id: str) -> Analyst:
         return self.analyts[analyst_id]
+
+    def save(self, analyst: Analyst):
+        self.analyts[Analyst.id] = Analyst
 
 
 class AnalystRepository(AnalystAbstractRepository):
@@ -69,6 +76,26 @@ class AnalystRepository(AnalystAbstractRepository):
             token=row[7],
         )
 
+    def save(self, analyst: Analyst):
+        sql = """
+            update analysts 
+            set name=%s, address=%s, email=%s, phone_number=%s, password=%s, expiry=%s, token=%s
+            where id=%s
+        """
+        self.cursor.execute(
+            sql,
+            [
+                analyst.name,
+                analyst.address,
+                analyst.email,
+                analyst.phone_number,
+                analyst.password,
+                analyst.expiry,
+                analyst.token,
+                analyst.id,
+            ],
+        )
+
 
 class InvestorAbstractRepository(ABC):
     @abstractmethod
@@ -77,6 +104,10 @@ class InvestorAbstractRepository(ABC):
 
     @abstractmethod
     def get(self, investor_id: str) -> Investor:
+        pass
+
+    @abstractmethod
+    def save(self, investor: Investor):
         pass
 
 
@@ -89,6 +120,9 @@ class FakeInvestorRepository(InvestorAbstractRepository):
 
     def get(self, investor_id: str) -> Investor:
         return self.analyts[investor_id]
+
+    def save(self, investor: Investor):
+        self.analyts[investor.id] = investor
 
 
 class InvestorRepository(InvestorAbstractRepository):
@@ -132,6 +166,26 @@ class InvestorRepository(InvestorAbstractRepository):
             password=row[5],
             expiry=row[6],
             token=row[7],
+        )
+
+    def save(self, investor: Investor):
+        sql = """
+            update investors
+            set name=%s, address=%s, email=%s, phone_number=%s, password=%s, expiry=%s, token=%s
+            where id=%s
+        """
+        self.cursor.execute(
+            sql,
+            [
+                investor.name,
+                investor.address,
+                investor.email,
+                investor.phone_number,
+                investor.password,
+                investor.expiry,
+                investor.token,
+                investor.id,
+            ],
         )
 
 

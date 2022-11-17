@@ -66,7 +66,9 @@ class Investor:
 
     # TODO: handle login rejection using exceptions
     def login(self, email: str, password: str) -> LoginReturn:
-        if self.email == email and self.password == password:
+        hashed_pass = str(sha256(password.encode("utf-8")).hexdigest())
+
+        if self.email == email and self.password == hashed_pass:
             self.expiry = datetime.now() + timedelta(hours=1)
             self.token = str(uuid4())
 
@@ -151,6 +153,7 @@ class Analyst:
                 email=email,
                 phone_number=phone_number,
                 password=str(sha256(password.encode("utf-8")).hexdigest()),
+                id=str(uuid4()),
             ),
             "plain_text_password": password,
         }

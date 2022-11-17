@@ -1,5 +1,10 @@
 drop table if exists analysts cascade;
 drop table if exists investors cascade;
+drop table if exists bots cascade;
+drop table if exists trades cascade;
+
+drop type if exists bot_state_enum cascade;
+drop type if exists risk_appetite_enum cascade;
 
 create type bot_state_enum as enum ('idle', 'running', 'finished', 'terminated');
 create type risk_appetite_enum as enum ('low', 'mid', 'high');
@@ -30,23 +35,6 @@ create table investors (
     primary key (id)
 );
 
-create table trades (
-    id uuid,
-    bot_id uuid,
-    stock_id varchar(100),
-    amount numeric,
-    buying_price numeric,
-    selling_price numeric,
-    spread numeric,
-    started_at timestamp with time zone,
-    ended_at timestamp with time zone,
-    company_name varchar(100),
-
-    primary key (id),
-    foreign key (bot_id)
-        references bots(id)
-);
-
 create table bots (
     id uuid,
     analyst_id uuid,
@@ -62,4 +50,21 @@ create table bots (
         references analysts(id),
     foreign key (investor_id)
         references investors(id)
+);
+
+create table trades (
+    id uuid,
+    bot_id uuid,
+    stock_id varchar(100),
+    amount numeric,
+    buying_price numeric,
+    selling_price numeric,
+    spread numeric,
+    started_at timestamp with time zone,
+    ended_at timestamp with time zone,
+    company_name varchar(100),
+
+    primary key (id),
+    foreign key (bot_id)
+        references bots(id)
 );

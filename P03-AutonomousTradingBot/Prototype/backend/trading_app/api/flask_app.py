@@ -51,7 +51,6 @@ def register_investor():
         request.json["address"],
         request.json["investor_email"],
         request.json["phone_number"],
-        request.json["password"],
         request.json["analyst_email"],
         unit_of_work.UnitOfWork(),
     )
