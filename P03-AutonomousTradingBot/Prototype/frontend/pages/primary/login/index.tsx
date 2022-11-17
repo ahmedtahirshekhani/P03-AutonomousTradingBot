@@ -1,7 +1,11 @@
 import type { NextPage } from 'next';
-import Link  from 'next/link';
+
+import Link from 'next/link';
+import React from 'react';
 
 const Home: NextPage = () => {
+    const [userId, setUserId] = React.useState(null);
+
 	return (
 		<div className="hero min-h-screen">
 			<div className="hero-content text-center">
@@ -9,6 +13,7 @@ const Home: NextPage = () => {
 					<h1 className="text-5xl font-bold">
 						Autonomous Trading Bot
 					</h1>
+
 
                     <div className="mt-9 ...">
                         <div className="flex flex-col space-y-10 ...">
@@ -30,6 +35,7 @@ const Home: NextPage = () => {
                         </div>
                     </div>
 					
+
 				</div>
 			</div>
 		</div>
@@ -37,4 +43,5 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
 

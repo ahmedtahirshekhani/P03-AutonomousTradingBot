@@ -6,12 +6,15 @@ from ..adapters.repository import (
     FakeAnalystRepository,
     InvestorRepository,
     FakeInvestorRepository,
+    BotRepository,
+    FakeBotRepository,
 )
 
 
 class AbstractUnitOfWork(ABC):
     analysts: AnalystRepository
     investors: InvestorRepository
+    bots: BotRepository
 
     def __enter__(self) -> "AbstractUnitOfWork":
         return self
@@ -34,6 +37,7 @@ class FakeUnitOfWork(AbstractUnitOfWork):
         super().__init__()
         self.analysts = FakeAnalystRepository()
         self.investors = FakeInvestorRepository()
+        self.bots = FakeBotRepository()
 
     def commit(self):
         pass
@@ -54,6 +58,7 @@ class UnitOfWork(AbstractUnitOfWork):
 
         self.analysts = AnalystRepository(self.connection)
         self.investors = InvestorRepository(self.connection)
+        self.bots = BotRepository(self.connection)
 
         return super().__enter__()
 

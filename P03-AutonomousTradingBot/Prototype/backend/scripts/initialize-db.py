@@ -8,7 +8,7 @@ connection = psycopg2.connect(
 )
 cursor = connection.cursor()
 
-with open("../db/initialize-db.sql") as sql_init:
+with open("../trading_app/db/initialize-db.sql") as sql_init:
     sql = sql_init.read()
     cursor.execute(sql)
 
