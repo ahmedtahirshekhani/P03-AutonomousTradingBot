@@ -9,7 +9,7 @@ def hello():
     return "Welcome to the autonomous trading bot!", 200
 
 
-@app.route("/create-analyst")
+@app.route("/create-analyst", methods=["POST"])
 def create_analyst():
     commands.create_analyst(
         request.json["name"],
@@ -22,7 +22,7 @@ def create_analyst():
     return "OK", 200
 
 
-@app.route("/analyst-login")
+@app.route("/analyst-login", methods=["POST"])
 def analyst_login():
     ret = commands.analyst_login(
         request.json["email"],
@@ -35,7 +35,7 @@ def analyst_login():
         return jsonify(ret), 401
 
 
-@app.route("/analyst-logout")
+@app.route("/analyst-logout", methods=["POST"])
 def analyst_logout():
     commands.analyst_logout(
         request.json["email"],
@@ -44,7 +44,7 @@ def analyst_logout():
     return "OK", 200
 
 
-@app.route("/register-investor")
+@app.route("/register-investor", methods=["POST"])
 def register_investor():
     ret = commands.register_investor(
         request.json["name"],
@@ -58,7 +58,7 @@ def register_investor():
     return jsonify(ret), 200
 
 
-@app.route("/investor-login")
+@app.route("/investor-login", methods=["POST"])
 def investor_login():
     ret = commands.investor_login(
         request.json["email"],
@@ -71,7 +71,7 @@ def investor_login():
         return jsonify(ret), 401
 
 
-@app.route("/investor-logout")
+@app.route("/investor-logout", methods=["POST"])
 def investor_logout():
     commands.investor_logout(
         request.json["email"],
