@@ -20,14 +20,7 @@ const Home: NextPage = () => {
                                 </button>
                             </Link>
                         </div>
-                        <div className="divider">OR</div>
-                        <div className="grid h-20 card bg-base-300 rounded-box place-items-center">
-                            <Link href="/primary/signup">
-                                <button className="btn btn-primary">
-                                    New User - Signup
-                                </button>
-                            </Link>
-                        </div>
+                        
 
                         
                         <div style={{ position: "static", bottom: 5, width:"100%" }} className="text-sm breadcrumbs">
@@ -37,7 +30,7 @@ const Home: NextPage = () => {
                                             <a>Home</a>
                                         </Link>
                                     </li> 
-                                    <li><p>Login/Signup</p></li> 
+                                    <li>Login</li> 
                                 </ul>
                         </div>
                     </div>
