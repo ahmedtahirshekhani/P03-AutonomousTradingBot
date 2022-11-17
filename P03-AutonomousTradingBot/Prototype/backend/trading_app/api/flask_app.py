@@ -22,7 +22,7 @@ def create_analyst():
     return "OK", 200
 
 
-@app.route("/analyst-login", methods=['POST'])
+@app.route("/analyst-login")
 def analyst_login():
     ret = commands.analyst_login(
         request.json["email"],
