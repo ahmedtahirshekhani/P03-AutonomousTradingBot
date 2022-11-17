@@ -18,7 +18,7 @@ const Home: NextPage = () => {
                     <li>
                         <a>
                             <Link href="/">
-                                Logout
+                                Sign Out
                             </Link>
                         </a>
                     </li>
