@@ -1,0 +1,39 @@
+3 weeks 
+
+Comments:
+Commented Code Everytime
+Update Comment if necessary
+Document a function (necessary) - only for necessary functions
+
+
+Follow same function style
+NamingConvention
+Avoid using single identifier(variable name) in different functions
+
+* IMPORTANT *
+We will be using camelCase for variable naming
+eg: newVariable
+We will use Pascal for Class and Function name
+eg: NewVariable
+For constants all CAPITAL
+eg: NEWVARIABLE
+
+
+Avoid Deep Nesting Structure
+Maintain proper Folder Structure
+Not make function of more than 30 lines (break into multiple functions if lengthy function)
+Catch each exception not generic one
+Avoid using Global Variables (Please think 10 times before using)
+Avoid goto statements
+
+
+Donot Hardcode the configurations so we will use i18n (Localization and Internationalization) so we can transfer it multilingual later on
+Peer Review
+Refactor the code (restructure the code)
+
+
+
+
+
+
+
