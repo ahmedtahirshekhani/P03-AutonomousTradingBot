@@ -78,3 +78,42 @@ def investor_logout():
         uow=unit_of_work.UnitOfWork(),
     )
     return "OK", 200
+
+
+"""
+Bot module
+"""
+
+
+@app.route("/add-bot", methods=["POST"])
+def add_bot():
+    commands.add_bot(
+        request.json["analyst_id"],
+        request.json["investor_id"],
+        request.json["state"],
+        request.json["trades"],
+        request.json["assigned_model"],
+        request.json["risk_appetite"],
+        request.json["target_return"],
+        request.json["duration"],
+        uow=unit_of_work.UnitOfWork(),
+    )
+    return "OK", 200
+
+
+@app.route("/initiate-bot-execution", methods=["POST"])
+def initiate_bot_execution():
+    commands.initiate_bot_execution(
+        request.json["bot_id"],
+        uow=unit_of_work.UnitOfWork(),
+    )
+    return "OK", 200
+
+
+@app.route("/terminate-bot", methods=["POST"])
+def terminate_bot():
+    commands.terminate_bot(
+        request.json["bot_id"],
+        uow=unit_of_work.UnitOfWork(),
+    )
+    return "OK", 200

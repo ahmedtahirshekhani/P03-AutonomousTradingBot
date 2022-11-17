@@ -1,8 +1,16 @@
 from .unit_of_work import AbstractUnitOfWork
-from ..domain.model import Analyst, LoginReturn, Investor
+from ..domain.model import (
+    Analyst,
+    LoginReturn,
+    Investor,
+    Bot,
+    Trade,
+    BotState,
+    RiskAppetite,
+)
 from hashlib import sha256
-
-from typing import Dict
+from datetime import datetime
+from typing import Dict, List
 
 
 def create_analyst(
@@ -74,3 +82,51 @@ def investor_logout(investor_email: str, uow: AbstractUnitOfWork):
     with uow:
         fetched_investor = uow.investors.get(investor_email=investor_email)
         fetched_investor.logout()
+
+
+"""
+Bot module
+"""
+
+
+def add_bot(
+    analyst_id: str,
+    investor_id: str,
+    state: BotState,
+    trades: List[Trade],
+    assigned_model: int,
+    risk_appetite: RiskAppetite,
+    target_return: float,
+    duration: datetime,
+    uow: AbstractUnitOfWork,
+):
+    new_bot = Bot(
+        analyst_id=analyst_id,
+        investor_id=investor_id,
+        state=state,
+        trades=trades,
+        assigned_model=assigned_model,
+        risk_appetite=risk_appetite,
+        target_return=target_return,
+        duration=duration,
+    )
+    with uow:
+        uow.bots.add(new_bot)
+
+
+def initiate_bot_execution(
+    bot_id: str,
+    uow: AbstractUnitOfWork,
+):
+    with uow:
+        fetched_bot = uow.bots.get(bot_id)
+        fetched_bot.initiate_execution()
+
+
+def terminate_bot(
+    bot_id: str,
+    uow: AbstractUnitOfWork,
+):
+    with uow:
+        fetched_bot = uow.bots.get(bot_id)
+        fetched_bot.terminate()
