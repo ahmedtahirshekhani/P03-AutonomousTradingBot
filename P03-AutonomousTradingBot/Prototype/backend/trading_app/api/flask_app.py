@@ -12,11 +12,11 @@ def hello():
 @app.route("/create-analyst")
 def create_analyst():
     commands.create_analyst(
-        "Shekhani",
-        "Lumsu",
-        "shekhani@lums.edu.pk",
-        "+92 333 3333333",
-        "strong_password",
+        request.json["name"],
+        request.json["address"],
+        request.json["email"],
+        request.json["phone_number"],
+        request.json["password"],
         unit_of_work.UnitOfWork(),
     )
     return "OK", 200
@@ -37,19 +37,44 @@ def analyst_login():
 
 @app.route("/analyst-logout")
 def analyst_logout():
-    pass
+    commands.analyst_logout(
+        request.json["email"],
+        uow=unit_of_work.UnitOfWork(),
+    )
+    return "OK", 200
 
 
 @app.route("/register-investor")
 def register_investor():
-    pass
+    ret = commands.register_investor(
+        request.json["name"],
+        request.json["address"],
+        request.json["investor_email"],
+        request.json["phone_number"],
+        request.json["password"],
+        request.json["analyst_email"],
+        unit_of_work.UnitOfWork(),
+    )
+    return jsonify(ret), 200
 
 
 @app.route("/investor-login")
 def investor_login():
-    pass
+    ret = commands.investor_login(
+        request.json["email"],
+        request.json["password"],
+        uow=unit_of_work.UnitOfWork(),
+    )
+    if ret.success == True:
+        return jsonify(ret), 202
+    else:
+        return jsonify(ret), 401
 
 
 @app.route("/investor-logout")
 def investor_logout():
-    pass
+    commands.investor_logout(
+        request.json["email"],
+        uow=unit_of_work.UnitOfWork(),
+    )
+    return "OK", 200

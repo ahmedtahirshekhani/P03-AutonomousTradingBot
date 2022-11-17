@@ -1,6 +1,8 @@
 from .unit_of_work import AbstractUnitOfWork
-from ..domain.model import Analyst, LoginReturn
+from ..domain.model import Analyst, LoginReturn, Investor
 from hashlib import sha256
+
+from typing import Dict
 
 
 def create_analyst(
@@ -49,7 +51,7 @@ def register_investor(
     password: str,
     analyst_email: str,
     uow: AbstractUnitOfWork,
-):
+) -> Dict[str, Investor | str]:
     with uow:
         fetched_analyst = uow.analysts.get(analyst_email=analyst_email)
         return fetched_analyst.register_investor(
