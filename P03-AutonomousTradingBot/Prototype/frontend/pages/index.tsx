@@ -1,4 +1,5 @@
 import type { NextPage } from 'next';
+import Link  from 'next/link';
 
 const Home: NextPage = () => {
 	return (
@@ -17,9 +18,11 @@ const Home: NextPage = () => {
 						Short Term Memory) to make predictions and trades on the
 						stock market.
 					</p>
-					<button className="btn btn-primary">
-						Start investing!
-					</button>
+					<Link href = "/primary">
+						<button className="btn btn-primary">
+							Start investing!
+						</button>
+					</Link>
 				</div>
 			</div>
 		</div>
@@ -27,3 +30,4 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
