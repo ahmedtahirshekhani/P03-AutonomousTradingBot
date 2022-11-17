@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Link from "next/link";
 import React from "react";
-import { login } from "../../services/auth";
+import { login } from "../../../../services/auth";
 import { useRouter } from "next/router";
 const Home: NextPage = () => {
   const [email, setEmail] = React.useState("");

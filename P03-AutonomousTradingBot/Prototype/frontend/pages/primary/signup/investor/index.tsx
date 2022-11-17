@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { registerInvestor } from "../../services/auth";
+import { registerInvestor } from "../../../../services/auth";
 
 import Swal from "sweetalert2";
 
@@ -164,4 +164,3 @@ const Home: NextPage = () => {
 };
 
 export default Home;
-
