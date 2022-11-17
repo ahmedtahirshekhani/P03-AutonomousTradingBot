@@ -1,9 +1,12 @@
 import type { NextPage } from 'next';
 import Link from 'next/link';
 import React from 'react';
+import {login} from './services/auth';
 
 const Home: NextPage = () => {
-    const [userId, setUserId] = React.useState(null);
+    const [email, setEmail] = React.useState("");
+    const [password, setPassword] = React.useState("");
+
 	return (
 		<div className="hero min-h-screen">
 			<div className="hero-content text-center">
@@ -20,8 +23,8 @@ const Home: NextPage = () => {
                                     <div className="grid h-20 card bg-base-300 rounded-box place-items-center">
                                         <div className="form-control">
                                             <label className="input-group">
-                                                <span>UserID</span>
-                                                <input type="text" placeholder="info@site.com" className="input input-bordered" />
+                                                <span>Email</span>
+                                                <input type="text" placeholder="example@example.com" className="input input-bordered" onChange = {(e)=>setEmail(e.target.value)}/>
                                             </label>
                                         </div>
                                     </div>
@@ -33,7 +36,7 @@ const Home: NextPage = () => {
                                         <div className="form-control">
                                             <label className="input-group">
                                                 <span>Password</span>
-                                                <input type="text" placeholder="12345678" className="input input-bordered" />
+                                                <input type="password" placeholder="Enter Password Here" className="input input-bordered" onChange = {(e)=>setPassword(e.target.value)}/>
                                             </label>
                                         </div>
                                     </div>
@@ -49,7 +52,7 @@ const Home: NextPage = () => {
 
                                 <div className="pt-6 ...">
                                     <Link href="/primary/dashboard">
-                                        <button className="btn btn-warning">Login</button>
+                                        <button className="btn btn-warning" onClick={()=>login(email, password, "analyst")}>Login</button>
                                     </Link>
                                 </div>
 
