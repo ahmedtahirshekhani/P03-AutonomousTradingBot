@@ -111,9 +111,9 @@ const Home: NextPage = () => {
                     <Link href="/">Home</Link>
                   </li>
                   <li>
-                    <Link href="/primary/login">Login</Link>
+                    <Link href="/primary">Login</Link>
                   </li>
-                 
+
                   <li>Analyst</li>
                 </ul>
               </div>
