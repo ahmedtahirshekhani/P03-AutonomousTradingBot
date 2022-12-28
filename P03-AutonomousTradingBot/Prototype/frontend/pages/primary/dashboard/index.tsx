@@ -5,70 +5,70 @@ import { useEffect, useState } from "react";
 import { logout } from "../../../services/auth";
 
 const Home: NextPage = () => {
-  const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [role, setRole] = useState("");
-  const logoutAuth = () => {
-    const email = localStorage.getItem("email")!;
-    const role = localStorage.getItem("role")!;
-    logout(email, role)
-      .then((res) => {
-        console.log(res);
-        localStorage.removeItem("token");
-        localStorage.removeItem("expiry");
-        localStorage.removeItem("email");
-        router.push("/primary");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+	const router = useRouter();
+	const [username, setUsername] = useState("");
+	const [role, setRole] = useState("");
+	const logoutAuth = () => {
+		const email = localStorage.getItem("email")!;
+		const role = localStorage.getItem("role")!;
+		logout(email, role)
+			.then((res) => {
+				console.log(res);
+				localStorage.removeItem("token");
+				localStorage.removeItem("expiry");
+				localStorage.removeItem("email");
+				router.push("/primary");
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
 
-  useEffect(() => {
-    if (localStorage.getItem("token") === null) {
-      router.push("/primary/login");
-    } else {
-      const email = localStorage.getItem("email")!;
-      const role = localStorage.getItem("role")!;
-      const username = email?.split("@")[0];
-      setRole(role)!;
-      setUsername(username);
-    }
-  }, []);
+	useEffect(() => {
+		if (localStorage.getItem("token") === null) {
+			router.push("/primary/login");
+		} else {
+			const email = localStorage.getItem("email")!;
+			const role = localStorage.getItem("role")!;
+			const username = email?.split("@")[0];
+			setRole(role)!;
+			setUsername(username);
+		}
+	}, []);
 
-  return (
-    <div>
-      <div className="text-4xl font-bold place-content-center p-8 mx-auto">
-        Welcome {username}!
-      </div>
-      {role === "analyst" ? (
-        <div className="grid h-20 card bg-base-300 rounded-box place-items-center">
-          <Link href="/primary/signup/investor">
-            <button className="btn btn-primary">Register Investor</button>
-          </Link>
-        </div>
-      ) : null}
-      <div
-        style={{ position: "absolute", top: "20px", right: "50px" }}
-        className="dropdown text-yellow-500"
-      >
-        <label tabIndex={0} className="btn btn-primary">
-          Profile
-        </label>
-        <ul
-          tabIndex={0}
-          className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
-        >
-          <li>
-            <Link href="#">Settings</Link>
-          </li>
-          <li>
-            <a onClick={() => logoutAuth()}>Logout</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  );
+	return (
+		<div>
+			<div className="text-4xl font-bold place-content-center p-8 mx-auto">
+				Welcome {username}!
+			</div>
+			{role === "analyst" ? (
+				<div className="grid h-20 card bg-base-300 rounded-box place-items-center">
+					<Link href="/primary/signup/investor">
+						<button className="btn btn-primary">Register Investor</button>
+					</Link>
+				</div>
+			) : null}
+			<div
+				style={{ position: "absolute", top: "20px", right: "50px" }}
+				className="dropdown text-yellow-500"
+			>
+				<label tabIndex={0} className="btn btn-primary">
+					Profile
+				</label>
+				<ul
+					tabIndex={0}
+					className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+				>
+					<li>
+						<Link href="#">Settings</Link>
+					</li>
+					<li>
+						<a onClick={() => logoutAuth()}>Logout</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	);
 };
 
 export default Home;
