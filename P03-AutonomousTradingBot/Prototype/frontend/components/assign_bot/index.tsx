@@ -12,7 +12,7 @@ const AssignBot = ({name, email, phone} : {name: string , email: string, phone: 
                   <td>
                     <div className="dropdown dropdown-right ">
                       <label className=" bg-black text-primary">
-                      <Link href = "/bot/addOrCurrent">
+                      <Link href = "/bot/addInstance">
 						<button className="btn btn-primary">
 							Select
 						</button>
