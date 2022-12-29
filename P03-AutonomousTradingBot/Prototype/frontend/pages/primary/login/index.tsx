@@ -46,7 +46,7 @@ const Home: NextPage = () => {
                                 </label>
 
                                 <div className="pt-6 ...">
-                                    <Link href="/primary/dashboard">
+                                    <Link href="/bot/assign_bot_to_investor">
                                         <button className="btn btn-warning">Login</button>
                                     </Link>
                                 </div>

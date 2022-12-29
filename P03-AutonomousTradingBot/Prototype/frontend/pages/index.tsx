@@ -18,7 +18,7 @@ const Home: NextPage = () => {
 						Short Term Memory) to make predictions and trades on the
 						stock market.
 					</p>
-					<Link href = "/bot/assign_bot_to_investor">
+					<Link href = "/primary">
 						<button className="btn btn-primary">
 							Start investing!
 						</button>
