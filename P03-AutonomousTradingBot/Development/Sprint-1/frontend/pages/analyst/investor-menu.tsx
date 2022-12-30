@@ -10,7 +10,7 @@ const InvestorMenu: NextPage = () => {
 						Autonomous Trading Bot
 					</h1>
 					<p className='py-6'></p>
-					<Link href='/analyst/add-instance'>
+					<Link href='/analyst/addInstance'>
 						<button className='btn btn-primary'>
 							Add Bot Instance
 						</button>

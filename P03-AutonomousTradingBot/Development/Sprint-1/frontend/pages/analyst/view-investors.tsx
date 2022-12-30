@@ -20,7 +20,7 @@ const ViewInvestors: NextPage = () => {
 									<th>Name </th>
 									<th>Email Address</th>
 									<th>Phone Number</th>
-									<th>Assign Bots</th>
+									<th></th>
 								</tr>
 							</thead>
 							<tbody>

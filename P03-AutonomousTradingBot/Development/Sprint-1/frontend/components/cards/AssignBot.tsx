@@ -13,13 +13,12 @@ const AssignBot = ({
 		<tr className='hover'>
 			<th className='text-primary'>*</th>
 			<td>{name}</td>
-			{/* <td>ganderton@gmail.com</td> */}
 			<td>{email}</td>
 			<td>{phone}</td>
 			<td>
 				<div className='dropdown dropdown-right '>
 					<label className=' bg-black text-primary'>
-						<Link href='/analyst/investor-menu'>
+						<Link href='/analyst/add-instance'>
 							<button className='btn btn-primary'>Select</button>
 						</Link>
 					</label>
