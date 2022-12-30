@@ -6,5 +6,9 @@
    <code>pip install -r requirements.txt</code>
 3. Activate the virtual environment
    <code>venv\Scripts\activate</code>
-4. Run the flask server
+4. Run the flask server locally
    <code>flask --app flask_app --debug run </code>
+
+## To deploy backend to gcloud
+
+`gcloud app deploy`
