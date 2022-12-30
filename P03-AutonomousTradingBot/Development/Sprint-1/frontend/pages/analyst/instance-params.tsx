@@ -1,7 +1,22 @@
 import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import Swal from 'sweetalert2';
 import AnalystLayout from '../../components/layouts/AnalystLayout';
+import { addBot } from '../../services/auth';
 
 const Home: NextPage = () => {
+	const router = useRouter();
+
+	const [amount, setAmount] = useState('');
+	const [risk, setRisk] = useState('');
+	const [roi, setRoi] = useState('');
+
+	const handleSubmit = async () => {
+		const response = await addBot(router.query.investor_id, risk, roi);
+		Swal.fire(response.message);
+	};
+
 	return (
 		<AnalystLayout>
 			<div className='hero min-h-screen bg-base-200'>
@@ -18,9 +33,10 @@ const Home: NextPage = () => {
 								</span>
 							</label>
 							<input
-								type='text'
+								type='number'
 								placeholder='Amount'
 								className='input input-primary'
+								onChange={e => setAmount(e.target.value)}
 							/>
 
 							<label className='label'></label>
@@ -35,19 +51,19 @@ const Home: NextPage = () => {
 									tabIndex={0}
 									className='btn btn-wide rounded button text-primary'
 								>
-									Risk Apetite
+									Risk Apetite: {risk}
 								</label>
 								<ul
 									tabIndex={0}
 									className='dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52'
 								>
-									<li>
+									<li onClick={() => setRisk('LOW')}>
 										<a>Low Risk - 5%</a>
 									</li>
-									<li>
+									<li onClick={() => setRisk('MEDIUM')}>
 										<a>Medium Risk - 10%</a>
 									</li>
-									<li>
+									<li onClick={() => setRisk('HIGH')}>
 										<a>High Risk - 15%</a>
 									</li>
 								</ul>
@@ -63,19 +79,19 @@ const Home: NextPage = () => {
 									tabIndex={0}
 									className='btn btn-wide rounded button text-primary'
 								>
-									ROI
+									ROI: {roi}
 								</label>
 								<ul
 									tabIndex={0}
 									className='dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52'
 								>
-									<li>
+									<li onClick={() => setRoi('5')}>
 										<a>5%</a>
 									</li>
-									<li>
+									<li onClick={() => setRoi('10')}>
 										<a>10%</a>
 									</li>
-									<li>
+									<li onClick={() => setRoi('15')}>
 										<a>15%</a>
 									</li>
 								</ul>
@@ -83,7 +99,12 @@ const Home: NextPage = () => {
 
 							<label className='label'></label>
 						</div>
-						<button className='btn btn-primary'>Submit</button>
+						<button
+							onClick={handleSubmit}
+							className='btn btn-primary'
+						>
+							Submit
+						</button>
 					</div>
 				</div>
 			</div>

@@ -11,6 +11,7 @@ from ..domain.model import (
 from hashlib import sha256
 from datetime import datetime
 from typing import Dict, List
+from uuid import uuid4
 
 
 def create_analyst(
@@ -23,21 +24,22 @@ def create_analyst(
 ):
     # check if analyst exists
     with uow:
-        exist_analyst = uow.analysts.get(analyst_email=email)
-        if exist_analyst is not None:
+        try:
+            uow.analysts.get(analyst_email=email)
             raise Exception("Analyst already exists!")
-        else:
-            print("Here")
-            hashed_pass = str(sha256(password.encode("utf-8")).hexdigest())
+        except Exception as e:
+            pass
 
-            new_analyst: Analyst = Analyst(
-                name=name,
-                address=address,
-                email=email,
-                phone_number=phone_number,
-                password=hashed_pass,
-            )
-            uow.analysts.add(new_analyst)
+        hashed_pass = str(sha256(password.encode("utf-8")).hexdigest())
+
+        new_analyst: Analyst = Analyst(
+            name=name,
+            address=address,
+            email=email,
+            phone_number=phone_number,
+            password=hashed_pass,
+        )
+        uow.analysts.add(new_analyst)
 
 
 def analyst_login(
@@ -145,6 +147,7 @@ def add_bot(
         risk_appetite=risk_appetite,
         target_return=target_return,
         duration=duration,
+        id=str(uuid4())
     )
     with uow:
         uow.bots.add(new_bot)

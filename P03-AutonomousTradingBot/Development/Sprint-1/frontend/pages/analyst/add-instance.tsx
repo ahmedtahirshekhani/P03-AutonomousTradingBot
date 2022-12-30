@@ -1,8 +1,12 @@
 import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import BotCard from '../../components/cards/BotCard';
 import AnalystLayout from '../../components/layouts/AnalystLayout';
 
 const AddInstance: NextPage = () => {
+	const router = useRouter();
+
 	return (
 		<AnalystLayout>
 			<div className='hero min-h-screen'>
@@ -16,12 +20,16 @@ const AddInstance: NextPage = () => {
 							<BotCard
 								desc='Add a trading instance to the selected investor and enter the required information to start running the bot for the investor.'
 								label='Add Trading Instance'
+								pathname={'/analyst/instance-params'}
+								investor_id={router.query.investor_id as string}
 							/>
 						</div>
 						<div className='col-sm-6 '>
 							<BotCard
 								desc='View all currently running bots for the selected investor.'
 								label='View Instances'
+								pathname={'/analyst/view-instances'}
+								investor_id={router.query.investor_id as string}
 							/>
 						</div>
 					</div>

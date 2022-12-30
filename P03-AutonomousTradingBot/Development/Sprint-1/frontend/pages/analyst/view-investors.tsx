@@ -1,8 +1,18 @@
 import type { NextPage } from 'next';
+import { useEffect, useState } from 'react';
 import AssignBot from '../../components/cards/AssignBot';
 import AnalystLayout from '../../components/layouts/AnalystLayout';
+import { getAllInvestors } from '../../services/auth';
 
 const ViewInvestors: NextPage = () => {
+	const [investors, setInvestors] = useState([]);
+
+	useEffect(() => {
+		getAllInvestors().then(res => {
+			setInvestors(res.investors);
+		});
+	}, []);
+
 	return (
 		<AnalystLayout>
 			<div className='hero min-h-screen'>
@@ -23,21 +33,15 @@ const ViewInvestors: NextPage = () => {
 									</tr>
 								</thead>
 								<tbody>
-									<AssignBot
-										name='Ali'
-										email='ali@gmail.com'
-										phone='02135526879'
-									/>
-									<AssignBot
-										name='Sheikhani'
-										email='sheikhani@gmail.com'
-										phone='02135526879'
-									/>
-									<AssignBot
-										name='Suleiman'
-										email='suleiman@gmail.com'
-										phone='02135526879'
-									/>
+									{investors.map(i => (
+										<AssignBot
+											key={i.id}
+											id={i.id}
+											name={i.name}
+											email={i.email}
+											phone={i.phone_number}
+										/>
+									))}
 								</tbody>
 							</table>
 						</div>

@@ -1,7 +1,7 @@
-import axios from "axios";
-import { useRouter } from "next/router";
-const apiproxy = "http://127.0.0.1:5000";
-const loginAuth = (email, password, role) => {
+import axios from 'axios';
+
+const login = (email, password) => {
+	email = email.toLowerCase();
 	return new Promise((resolve, reject) => {
 		// request content type json
 		const req = {
@@ -10,88 +10,184 @@ const loginAuth = (email, password, role) => {
 		};
 		// convert req to json
 		const jsonReq = JSON.stringify(req);
-		result = {};
+
 		axios
-			.post(`/api/${role}-login`, jsonReq, {
+			.post(`/api/v1/auth/login`, jsonReq, {
 				headers: {
-					"Content-Type": "application/json",
+					'Content-Type': 'application/json',
 				},
 			})
-			.then((res) => {
-				console.log(res);
-				localStorage.setItem("token", res.data.token);
-				localStorage.setItem("expiry", res.data.expiry);
-				localStorage.setItem("role", role);
+			.then(res => {
+				localStorage.setItem('access_token', res.data.access_token);
+				localStorage.setItem('expires_in', res.data.expires_in);
+				localStorage.setItem('role', res.data.role);
 				resolve(res);
 			})
-			.catch((err) => {
+			.catch(err => {
 				console.log(err);
 				reject(err);
 			});
 	});
 };
 
-const login = (email, password, role) => {
-	email = email.toLowerCase();
-	return loginAuth(email, password, role);
-};
-
-const registerInvestor = (
-	ntn,
-	inv_email,
-	analyst_email,
-	name,
-	phone,
-	address
-) => {
-	const req = {
-		investor_email: inv_email,
+const registerInvestor = async (ntn, inv_email, name, phone, address) => {
+	var data = JSON.stringify({
 		name: name,
-		phone_number: phone,
-		analyst_email: analyst_email,
 		address: address,
+		investor_email: inv_email,
+		phone_number: phone,
+		analyst_email: '',
 		ntn: ntn,
-	};
-	const jsonReq = JSON.stringify(req);
-	return new Promise((resolve, reject) => {
-		axios
-			.post("/api/register-investor", jsonReq, {
-				headers: {
-					"Content-Type": "application/json",
-				},
-			})
-			.then((res) => {
-				resolve(res.data);
-			})
-			.catch((err) => {
-				reject(err);
-			});
 	});
+
+	var config = {
+		method: 'post',
+		url: '/api/v1/register-investor',
+		headers: {
+			Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+			'Content-Type': 'application/json',
+		},
+		data: data,
+	};
+
+	const response = await axios(config);
+	return response.data;
 };
 
-const logout = (email, role) => {
-	const emailReq = {
-		email: email,
-	};
-	const jsonReq = JSON.stringify(emailReq);
+const logout = () => {
 	return new Promise((resolve, reject) => {
-		axios
-			.post(`/api/${role}-logout`, jsonReq, {
-				headers: {
-					"Content-Type": "application/json",
-				},
-			})
+		localStorage.removeItem('access_token');
+		localStorage.removeItem('expires_in');
+		localStorage.removeItem('role');
 
-			.then((res) => {
-				localStorage.removeItem("token");
-				localStorage.removeItem("expiry");
-				localStorage.removeItem("role");
+		axios
+			.post(
+				`/api/v1/logout`,
+				{},
+				{
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${localStorage.getItem(
+							'access_token'
+						)}`,
+					},
+				}
+			)
+			.then(res => {
 				resolve(res);
 			})
-			.catch((err) => {
+			.catch(err => {
 				reject(err);
 			});
 	});
 };
 
-export { login, registerInvestor, logout };
+const getAllInvestors = async () => {
+	var data = '';
+
+	var config = {
+		method: 'get',
+		url: '/api/v1/get-all-investors',
+		headers: {
+			Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+		},
+		data: data,
+	};
+
+	const response = await axios(config);
+	return response.data;
+};
+
+const getAllBots = async investor_id => {
+	var data = JSON.stringify({
+		investor_id: investor_id,
+	});
+
+	var config = {
+		method: 'post',
+		url: '/api/v1/get-bots',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+		},
+		data: data,
+	};
+
+	const response = await axios(config);
+	return response.data;
+};
+
+const addBot = async (investor_id, risk_appetite, target_return) => {
+	var data = JSON.stringify({
+		investor_id: investor_id,
+		trades: [],
+		assigned_model: 0,
+		risk_appetite: risk_appetite,
+		target_return: target_return,
+		duration: '10-12-2023',
+	});
+
+	var config = {
+		method: 'post',
+		url: '/api/v1/add-bot',
+		headers: {
+			Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+			'Content-Type': 'application/json',
+		},
+		data: data,
+	};
+
+	const response = await axios(config);
+	return response.data;
+};
+
+const initiateBotExecution = async bot_id => {
+	var data = JSON.stringify({
+		bot_id: bot_id,
+	});
+
+	var config = {
+		method: 'put',
+		url: '/api/v1/initiate-bot-execution',
+		headers: {
+			Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+			'Content-Type': 'application/json',
+		},
+		data: data,
+	};
+
+	const response = await axios(config);
+	console.log(response.data);
+	return response.data;
+};
+
+const terminateBot = async bot_id => {
+	var data = JSON.stringify({
+		bot_id: bot_id,
+	});
+
+	var config = {
+		method: 'put',
+		url: '/api/v1/terminate-bot',
+		headers: {
+			Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+			'Content-Type': 'application/json',
+		},
+		data: data,
+	};
+
+	const response = await axios(config);
+	console.log(response.data);
+	return response.data;
+};
+
+export {
+	login,
+	registerInvestor,
+	logout,
+	getAllInvestors,
+	getAllBots,
+	addBot,
+	initiateBotExecution,
+	terminateBot,
+};
