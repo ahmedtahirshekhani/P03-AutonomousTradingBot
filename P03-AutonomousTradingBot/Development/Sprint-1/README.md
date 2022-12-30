@@ -1,5 +1,9 @@
-Project: Name and Code
-Team: Names and ids of team members.
+Project: Autonomous Trading Bot - P03
+Team:
+Ahmed Tahir Shekhani - 23100197
+Syed Talal Hasan - 23100176
+Suleman Mahmood - 23100011
+Ali Asghar - 23100198
 
 SPRINT-1 SUBMISSION GUIDELINES
 
