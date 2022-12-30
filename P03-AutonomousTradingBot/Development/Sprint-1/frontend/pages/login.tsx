@@ -1,16 +1,21 @@
 import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 const Login: NextPage = () => {
+	const router = useRouter();
+
 	const [email, setEmail] = useState<String>('');
 	const [password, setPassword] = useState<String>('');
 
-	const handleLogin = () => {};
+	const handleLogin = () => {
+		router.push('/analyst');
+	};
 
 	return (
 		<div className='hero min-h-screen bg-base-200'>
 			<div className='hero-content flex-col lg:flex-row-reverse'>
-				<div className='text-center lg:text-left'>
+				<div className='text-center lg:text-left lg:ml-8'>
 					<h1 className='text-5xl font-bold'>Login now!</h1>
 					<p className='py-6'>
 						Start investing and enjoy autonomous trading benefits!
@@ -39,14 +44,6 @@ const Login: NextPage = () => {
 								className='input input-bordered'
 								onChange={e => setPassword(e.target.value)}
 							/>
-							{/* <label className='label'>
-								<a
-									href='#'
-									className='label-text-alt link link-hover'
-								>
-									Forgot password?
-								</a>
-							</label> */}
 						</div>
 						<div className='form-control mt-6'>
 							<button
