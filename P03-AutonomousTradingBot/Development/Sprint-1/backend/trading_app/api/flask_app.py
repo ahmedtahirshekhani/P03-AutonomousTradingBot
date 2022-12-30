@@ -1,6 +1,6 @@
 import datetime
 from flask import Flask, request, jsonify
-from ..entrypoint import commands, unit_of_work
+from ..entrypoint import commands, unit_of_work, queries
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 
 
@@ -32,6 +32,40 @@ def create_analyst():
     
 
 
+@app.route(prefix+"/auth/login", methods=["POST"])
+def login():
+    email = request.json["email"]
+    password = request.json["password"]
+    ret = {}
+    try:
+        ret = commands.analyst_login(
+            email,
+            password,
+            uow=unit_of_work.UnitOfWork(),
+        )
+        
+    except Exception as e:
+        try:
+            ret = commands.investor_login(
+                email,
+                password,
+                uow=unit_of_work.UnitOfWork(),
+            )
+        except Exception as e:
+            return jsonify({"success": False, "message": str(e)}), 401
+
+    # expires in 1hr
+    access_token = create_access_token(identity=email, expires_delta=datetime.timedelta(hours=1))
+    retObj = ret.__dict__
+    retObj["access_token"] = access_token
+    retObj["token_type"] = "bearer"
+    retObj["expires_in"] = 3600
+    
+    return jsonify(retObj), 200
+
+
+
+
 @app.route(prefix+"/analyst-login", methods=["POST"])
 def analyst_login():
     email = request.json["email"]
@@ -58,6 +92,7 @@ def analyst_login():
 @jwt_required()
 def analyst_logout():
     email = get_jwt_identity()
+    
     commands.analyst_logout(
         email,
         uow=unit_of_work.UnitOfWork(),
@@ -142,21 +177,47 @@ def add_bot():
     return jsonify(retObj), 200
 
 
+@app.route(prefix + "/get-bots", methods=["GET"])
+@jwt_required()
+def get_bots():
+    analyst_email = get_jwt_identity()
+    analyst = commands.get_analyst(analyst_email, uow=unit_of_work.UnitOfWork())
+    analyst_id = analyst.id
+    investor_id = request.json["investor_id"]
+    bots = queries.view_all_bots(analyst_id, investor_id, uow=unit_of_work.UnitOfWork())
+    retObj = {"success": True, "bots": bots, "message": "Bots fetched successfully!"}
+    return jsonify(retObj), 200
+
+@app.route(prefix + "/initiate-bot-execution", methods=["PUT"])
+def initiate_bot_execution():
+    try:
+        commands.initiate_bot_execution(
+        request.json["bot_id"],
+        uow=unit_of_work.UnitOfWork(),
+    )
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 400
+    return jsonify({"success": True, "message": "Bot execution initiated successfully!"}), 200
 
 
-# @app.route(prefix + "/initiate-bot-execution", methods=["POST"])
-# def initiate_bot_execution():
-#     commands.initiate_bot_execution(
-#         request.json["bot_id"],
-#         uow=unit_of_work.UnitOfWork(),
-#     )
-#     return "OK", 200
+@app.route(prefix + "/terminate-bot", methods=["PUT"])
+def terminate_bot():
+    try:
+        commands.terminate_bot(
+        request.json["bot_id"],
+        uow=unit_of_work.UnitOfWork(),
+    )
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 400
+    return jsonify({"success": True, "message": "Bot execution terminated successfully!"}), 200
 
 
-# @app.route(prefix + "/terminate-bot", methods=["POST"])
-# def terminate_bot():
-#     commands.terminate_bot(
-#         request.json["bot_id"],
-#         uow=unit_of_work.UnitOfWork(),
-#     )
-#     return "OK", 200
+@app.route(prefix + "/handle-execution", methods=["PUT"])
+def handle_execution():
+    try:
+        bots = commands.handle_execution(uow=unit_of_work.UnitOfWork())
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 400
+
+    return jsonify({"success": True, "message": "Bot execution handled successfully!", "bots":bots}), 200
+    
