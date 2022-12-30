@@ -210,3 +210,14 @@ def terminate_bot():
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 400
     return jsonify({"success": True, "message": "Bot execution terminated successfully!"}), 200
+
+
+@app.route(prefix + "/handle-execution", methods=["PUT"])
+def handle_execution():
+    try:
+        bots = commands.handle_execution(uow=unit_of_work.UnitOfWork())
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 400
+
+    return jsonify({"success": True, "message": "Bot execution handled successfully!", "bots":bots}), 200
+    
