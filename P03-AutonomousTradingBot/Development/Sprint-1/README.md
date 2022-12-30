@@ -18,18 +18,38 @@ LIST OF REQUIREMENTS COMPLETED IN THE SPRINT
 
 <List down use cases completed in the current sprint>
 
+1. Configure Model Parameters to make predictions (integration in sprint 2)
+2. Define stoppiong parameters of the bot
+3. User initiates the bot for execution
+4. Forcefully terminate the execution of the bot
+5. Assign bots to investor
+6. As an investor, I want to be able to login to my dashboard with the credentials provided by my analyst.
+
 ---
 
 LIST OF REQUIREMENTS COMPLETED SO FAR
 
 <List down use cases completed so far including those in the previous sprints>
 
+1. Login with credentials
+2. Analyst gets credentials for a registered investor
+3. Configure Model Parameters to make predictions (integration in sprint 2)
+4. Define stoppiong parameters of the bot
+5. User initiates the bot for execution
+6. Forcefully terminate the execution of the bot
+7. Assign bots to investor
+8. As an investor, I want to be able to login to my dashboard with the credentials provided by my analyst.
 ---
 
 HOW TO ACCESS THE SYSTEM
+
 
 ---
 
 ADDITIONAL INFORMATION
 
 <Any additional information that you would like me to know>
+
+1. Implemented JWT (Json Web Token) 
+2. Single Login for Analyst and Investor Implemented that fetches the role from backend automatically. This was implemented after a suggestion made during the meeting with 10 pearls representatives. 
+3. We used an environment variable to manage the private credentials of databse connections 
