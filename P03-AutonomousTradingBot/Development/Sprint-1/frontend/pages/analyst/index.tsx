@@ -8,19 +8,19 @@ const AnalystDashboard: NextPage = () => {
 			<div className='hero min-h-screen bg-base-200'>
 				<div className='hero-content text-center'>
 					<div className='max-w-md flex flex-col'>
-						<div className='btn btn-primary'>
-							<Link href='/analyst/view-investors'>
+						<Link href='/analyst/view-investors'>
+							<button className='btn btn-primary'>
 								View Investors
-							</Link>
-						</div>
+							</button>
+						</Link>
 
 						<div className='h-4'></div>
 
-						<div className='btn btn-primary'>
-							<Link href='/analyst/register-investor'>
+						<Link href='/analyst/register-investor'>
+							<button className='btn btn-primary'>
 								Register Investor
-							</Link>
-						</div>
+							</button>
+						</Link>
 					</div>
 				</div>
 			</div>

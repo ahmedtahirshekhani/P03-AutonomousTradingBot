@@ -1,6 +1,7 @@
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { login } from '../services/auth';
 
 const Login: NextPage = () => {
 	const router = useRouter();
@@ -9,7 +10,13 @@ const Login: NextPage = () => {
 	const [password, setPassword] = useState<String>('');
 
 	const handleLogin = () => {
-		router.push('/analyst');
+		login(email, password)
+			.then(res => {
+				router.push(`/${res.data.role}`);
+			})
+			.catch(e => {
+				console.log(e.message);
+			});
 	};
 
 	return (

@@ -64,8 +64,6 @@ def login():
     return jsonify(retObj), 200
 
 
-
-
 @app.route(prefix+"/analyst-login", methods=["POST"])
 def analyst_login():
     email = request.json["email"]
@@ -104,13 +102,15 @@ def analyst_logout():
 @app.route(prefix+"/register-investor", methods=["POST"])
 @jwt_required()
 def register_investor():
+    email = get_jwt_identity()
+
     try:
         ret = commands.register_investor(
             request.json["name"],
             request.json["address"],
             request.json["investor_email"],
             request.json["phone_number"],
-            request.json["analyst_email"],
+            email,
             unit_of_work.UnitOfWork(),
         )
         return jsonify(ret), 200
@@ -177,7 +177,7 @@ def add_bot():
     return jsonify(retObj), 200
 
 
-@app.route(prefix + "/get-bots", methods=["GET"])
+@app.route(prefix + "/get-bots", methods=["POST"])
 @jwt_required()
 def get_bots():
     analyst_email = get_jwt_identity()
@@ -221,3 +221,8 @@ def handle_execution():
 
     return jsonify({"success": True, "message": "Bot execution handled successfully!", "bots":bots}), 200
     
+@app.route(prefix + "/get-all-investors", methods=["GET"])
+@jwt_required()
+def get_all_investors():
+    investors = queries.get_all_investors(uow=unit_of_work.UnitOfWork())
+    return jsonify({"success": True, "message": "All Investors returned!", "investors":investors}), 200

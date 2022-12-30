@@ -167,6 +167,28 @@ class InvestorRepository(InvestorAbstractRepository):
             password=row[5]
         )
 
+    def get_all(self) -> List[Investor]:
+        sql = """
+            select id, name, address, email, phone_number, password
+            from investors
+        """
+        self.cursor.execute(sql)
+        rows = self.cursor.fetchall()
+        if len(rows) == 0:
+            return None
+        else:
+            return [
+                Investor(
+                    id=row[0],
+                    name=row[1],
+                    address=row[2],
+                    email=row[3],
+                    phone_number=row[4],
+                    password=row[5]
+                ) for row in rows
+            ]
+
+
     def save(self, investor: Investor):
         sql = """
             update investors

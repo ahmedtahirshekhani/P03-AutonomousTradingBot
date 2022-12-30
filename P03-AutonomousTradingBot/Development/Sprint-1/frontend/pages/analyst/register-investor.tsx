@@ -12,11 +12,10 @@ const RegisterInvestor: NextPage = () => {
 	const [email, setEmail] = useState('');
 	const [phone, setPhone] = useState('');
 	const [address, setAddress] = useState('');
-	const [analyst_email, setAnalystEmail] = useState('');
 	const router = useRouter();
 
 	const regInvestor = () => {
-		registerInvestor(NTN, email, analyst_email, name, phone, address)
+		registerInvestor(NTN, email, name, phone, address)
 			.then(res => {
 				Swal.fire({
 					title: 'Investor successfully registered',
@@ -29,7 +28,7 @@ const RegisterInvestor: NextPage = () => {
 					confirmButtonText: 'Return to Dashboard',
 				}).then(result => {
 					if (result.isConfirmed) {
-						router.push('/primary/dashboard');
+						router.push('/analyst');
 					}
 				});
 				console.log(res);
@@ -38,11 +37,6 @@ const RegisterInvestor: NextPage = () => {
 				console.log(err);
 			});
 	};
-
-	useEffect(() => {
-		const email = localStorage.getItem('email')!;
-		setAnalystEmail(email);
-	}, []);
 
 	return (
 		<AnalystLayout>
