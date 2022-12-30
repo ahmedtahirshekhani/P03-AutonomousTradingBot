@@ -21,17 +21,23 @@ def create_analyst(
     password: str,
     uow: AbstractUnitOfWork,
 ):
-    hashed_pass = str(sha256(password.encode("utf-8")).hexdigest())
-
-    new_analyst: Analyst = Analyst(
-        name=name,
-        address=address,
-        email=email,
-        phone_number=phone_number,
-        password=hashed_pass,
-    )
+    # check if analyst exists
     with uow:
-        uow.analysts.add(new_analyst)
+        exist_analyst = uow.analysts.get(analyst_email=email)
+        if exist_analyst is not None:
+            raise Exception("Analyst already exists!")
+        else:
+            print("Here")
+            hashed_pass = str(sha256(password.encode("utf-8")).hexdigest())
+
+            new_analyst: Analyst = Analyst(
+                name=name,
+                address=address,
+                email=email,
+                phone_number=phone_number,
+                password=hashed_pass,
+            )
+            uow.analysts.add(new_analyst)
 
 
 def analyst_login(
@@ -53,6 +59,12 @@ def analyst_logout(analyst_email: str, uow: AbstractUnitOfWork):
         uow.analysts.save(fetched_analyst)
 
 
+def get_analyst(analyst_email: str, uow: AbstractUnitOfWork) -> Analyst:
+    with uow:
+        fetched_analyst = uow.analysts.get(analyst_email=analyst_email)
+        return fetched_analyst
+
+
 def register_investor(
     name: str,
     address: str,
@@ -61,16 +73,25 @@ def register_investor(
     analyst_email: str,
     uow: AbstractUnitOfWork,
 ) -> Dict[str, Investor | str]:
+    print("In register_investor")
     with uow:
+        exist_investor = uow.investors.get(investor_email=email)
+        print("exist_investor: ", exist_investor)
+        if exist_investor is not None:
+            raise Exception("Investor already exists!")
         fetched_analyst = uow.analysts.get(analyst_email=analyst_email)
-        ret = fetched_analyst.register_investor(
-            name=name,
-            address=address,
-            email=email,
-            phone_number=phone_number,
-        )
-        uow.investors.add(ret["investor"])
-        return ret
+        if fetched_analyst is not None:
+    
+            ret = fetched_analyst.register_investor(
+                name=name,
+                address=address,
+                email=email,
+                phone_number=phone_number,
+            )
+            uow.investors.add(ret["investor"])
+            return ret
+        else:
+            raise Exception("Analyst does not exist!")
 
 
 def investor_login(
@@ -78,6 +99,8 @@ def investor_login(
 ) -> LoginReturn:
     with uow:
         fetched_investor = uow.investors.get(investor_email=investor_email)
+        if fetched_investor is None:
+            raise Exception("No such email exists!")
         creds: LoginReturn = fetched_investor.login(
             email=investor_email, password=password
         )
@@ -100,7 +123,6 @@ Bot module
 def add_bot(
     analyst_id: str,
     investor_id: str,
-    state: BotState,
     trades: List[Trade],
     assigned_model: int,
     risk_appetite: RiskAppetite,
@@ -108,10 +130,11 @@ def add_bot(
     duration: datetime,
     uow: AbstractUnitOfWork,
 ):
+
     new_bot = Bot(
         analyst_id=analyst_id,
         investor_id=investor_id,
-        state=state,
+        state=BotState.IDLE,
         trades=trades,
         assigned_model=assigned_model,
         risk_appetite=risk_appetite,
@@ -138,3 +161,5 @@ def terminate_bot(
     with uow:
         fetched_bot = uow.bots.get(bot_id)
         fetched_bot.terminate()
+
+

@@ -169,7 +169,17 @@ def terminate_bot(
         fetched_bot.terminate()
         uow.bots.save(fetched_bot)
 
-def get_bots(analyst_id, investor_id, uow: AbstractUnitOfWork):
+
+# trigger bot execution after every n minutes
+def handle_execution(uow: AbstractUnitOfWork):
+    # get all bots in running state
     with uow:
-        fetched_bots = uow.bots.get_bots(analyst_id, investor_id)
-        return fetched_bots
+        fetch_all_running_bots = uow.bots.get_all_running_bots()
+
+        for bot in fetch_all_running_bots:
+            # Do trade etc
+            pass
+        return fetch_all_running_bots
+    
+
+

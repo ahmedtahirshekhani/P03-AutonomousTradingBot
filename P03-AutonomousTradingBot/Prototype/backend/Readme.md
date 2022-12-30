@@ -5,6 +5,6 @@
 2. Install the requirements first
    <code>pip install -r requirements.txt</code>
 3. Activate the virtual environment
-   <code>.venv\Scripts\activate</code>
+   <code>venv\Scripts\activate</code>
 4. Run the flask server
-   <code>flask --app flask_app.py run </code>
+   <code>flask --app flask_app --debug run </code>

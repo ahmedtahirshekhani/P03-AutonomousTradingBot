@@ -10,6 +10,10 @@ from ..adapters.repository import (
     FakeBotRepository,
 )
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 
 class AbstractUnitOfWork(ABC):
     analysts: AnalystRepository
@@ -48,12 +52,21 @@ class FakeUnitOfWork(AbstractUnitOfWork):
 
 class UnitOfWork(AbstractUnitOfWork):
     def __enter__(self):
+        # self.connection = psycopg2.connect(
+        #     host="ec2-52-1-17-228.compute-1.amazonaws.com",
+        #     database="d6n032iomt2j2b",
+        #     user="wtnfvochnbjkxy",
+        #     password="161aace1eb2a7e56721ca628d0950ec8b41f3b8f348acdb877d3ee5829ff8de4",
+        # )
+
         self.connection = psycopg2.connect(
-            host="ec2-52-1-17-228.compute-1.amazonaws.com",
-            database="d6n032iomt2j2b",
-            user="wtnfvochnbjkxy",
-            password="161aace1eb2a7e56721ca628d0950ec8b41f3b8f348acdb877d3ee5829ff8de4",
+            host=os.environ.get("DB_HOST"),
+            database=os.environ.get("DB_NAME"),
+            user=os.environ.get("DB_USER"),
+            password=os.environ.get("DB_PASSWORD"),
+            port=os.environ.get("DB_PORT")
         )
+
         self.cursor = self.connection.cursor()
 
         self.analysts = AnalystRepository(self.connection)
