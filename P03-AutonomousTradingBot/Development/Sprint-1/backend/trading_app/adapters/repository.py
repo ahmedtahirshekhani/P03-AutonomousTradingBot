@@ -11,7 +11,7 @@ class AnalystAbstractRepository(ABC):
         pass
 
     @abstractmethod
-    def get(self, analyst_id: str) -> Analyst:
+    def get(self, analyst_email: str) -> Analyst:
         pass
 
     @abstractmethod
@@ -24,13 +24,17 @@ class FakeAnalystRepository(AnalystAbstractRepository):
         self.analyts: Dict[str, Analyst] = {}
 
     def add(self, analyst: Analyst):
-        self.analyts[Analyst.id] = Analyst
+        self.analyts[analyst.id] = analyst
 
-    def get(self, analyst_id: str) -> Analyst:
-        return self.analyts[analyst_id]
+    def get(self, analyst_email: str) -> Analyst:
+        for analyst in self.analyts.values():
+            if analyst.email == analyst_email:
+                return analyst
+
+        raise Exception("No such email exists!")
 
     def save(self, analyst: Analyst):
-        self.analyts[Analyst.id] = Analyst
+        self.analyts[analyst.id] = analyst
 
 
 class AnalystRepository(AnalystAbstractRepository):
@@ -51,7 +55,7 @@ class AnalystRepository(AnalystAbstractRepository):
                 analyst.address,
                 analyst.email,
                 analyst.phone_number,
-                analyst.password
+                analyst.hashed_password,
             ],
         )
 
@@ -63,19 +67,18 @@ class AnalystRepository(AnalystAbstractRepository):
         """
         self.cursor.execute(sql, [analyst_email])
         row = self.cursor.fetchone()
-        print("row: ", row)
+
         if row is None:
             raise Exception("No such email exists!")
         else:
-            print("Row not none")
             return Analyst(
-            id=row[0],
-            name=row[1],
-            address=row[2],
-            email=row[3],
-            phone_number=row[4],
-            password=row[5],
-        )
+                id=row[0],
+                name=row[1],
+                address=row[2],
+                email=row[3],
+                phone_number=row[4],
+                hashed_password=row[5],
+            )
 
     def save(self, analyst: Analyst):
         sql = """
@@ -90,7 +93,7 @@ class AnalystRepository(AnalystAbstractRepository):
                 analyst.address,
                 analyst.email,
                 analyst.phone_number,
-                analyst.password,
+                analyst.hashed_password,
                 analyst.id,
             ],
         )
@@ -102,7 +105,11 @@ class InvestorAbstractRepository(ABC):
         pass
 
     @abstractmethod
-    def get(self, investor_id: str) -> Investor:
+    def get(self, investor_email: str) -> Investor:
+        pass
+
+    @abstractmethod
+    def get_all(self) -> List[Investor]:
         pass
 
     @abstractmethod
@@ -112,16 +119,23 @@ class InvestorAbstractRepository(ABC):
 
 class FakeInvestorRepository(InvestorAbstractRepository):
     def __init__(self):
-        self.analyts: Dict[str, Investor] = {}
+        self.investors: Dict[str, Investor] = {}
 
     def add(self, investor: Investor):
-        self.analyts[investor.id] = investor
+        self.investors[investor.id] = investor
 
-    def get(self, investor_id: str) -> Investor:
-        return self.analyts[investor_id]
+    def get(self, investor_email: str) -> Investor:
+        for analyst in self.investors.values():
+            if analyst.email == investor_email:
+                return analyst
+
+        raise Exception("No such email exists!")
+
+    def get_all(self) -> List[Investor]:
+        return list(self.investors.values())
 
     def save(self, investor: Investor):
-        self.analyts[investor.id] = investor
+        self.investors[investor.id] = investor
 
 
 class InvestorRepository(InvestorAbstractRepository):
@@ -142,7 +156,7 @@ class InvestorRepository(InvestorAbstractRepository):
                 investor.address,
                 investor.email,
                 investor.phone_number,
-                investor.password,
+                investor.hashed_password,
             ],
         )
 
@@ -154,18 +168,40 @@ class InvestorRepository(InvestorAbstractRepository):
         """
         self.cursor.execute(sql, [investor_email])
         row = self.cursor.fetchone()
-        print("row", row)
+
         if row is None:
-            return None
+            raise Exception("Investor not found!")
         else:
             return Investor(
-            id=row[0],
-            name=row[1],
-            address=row[2],
-            email=row[3],
-            phone_number=row[4],
-            password=row[5]
-        )
+                id=row[0],
+                name=row[1],
+                address=row[2],
+                email=row[3],
+                phone_number=row[4],
+                hashed_password=row[5],
+            )
+
+    def get_all(self) -> List[Investor]:
+        sql = """
+            select id, name, address, email, phone_number, password
+            from investors
+        """
+        self.cursor.execute(sql)
+        rows = self.cursor.fetchall()
+        if len(rows) == 0:
+            raise Exception("Investor not found!")
+        else:
+            return [
+                Investor(
+                    id=row[0],
+                    name=row[1],
+                    address=row[2],
+                    email=row[3],
+                    phone_number=row[4],
+                    hashed_password=row[5],
+                )
+                for row in rows
+            ]
 
     def save(self, investor: Investor):
         sql = """
@@ -180,7 +216,7 @@ class InvestorRepository(InvestorAbstractRepository):
                 investor.address,
                 investor.email,
                 investor.phone_number,
-                investor.password,
+                investor.hashed_password,
                 investor.id,
             ],
         )
@@ -193,11 +229,15 @@ Bot module
 
 class BotAbstractRepository(ABC):
     @abstractmethod
-    def add(self, bot: Bot):
+    def add(self, bot: Bot) -> None:
         pass
 
     @abstractmethod
     def get(self, bot_id: str) -> Bot:
+        pass
+
+    @abstractmethod
+    def save(self, bot: Bot) -> None:
         pass
 
 
@@ -210,6 +250,9 @@ class FakeBotRepository(BotAbstractRepository):
 
     def get(self, bot_id: str) -> Bot:
         return self.bots[bot_id]
+
+    def save(self, bot: Bot):
+        self.bots[bot.id] = bot
 
 
 class BotRepository(BotAbstractRepository):
@@ -281,7 +324,6 @@ class BotRepository(BotAbstractRepository):
                 for r in trades_rows
             ],
         )
-
 
     def save(self, bot: Bot):
         sql = """

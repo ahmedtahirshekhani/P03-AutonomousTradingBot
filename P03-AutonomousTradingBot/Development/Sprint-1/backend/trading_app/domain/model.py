@@ -1,12 +1,9 @@
-import json
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
-from hashlib import sha256
-from typing import Dict, List
+from datetime import datetime
+from typing import List
 from uuid import uuid4
 from enum import Enum
-
-
+from .utils import hash_password
 
 INVESTOR_PASS_LEN: int = 8
 
@@ -35,91 +32,69 @@ Future upgrades
 """
 
 
-@dataclass(frozen=True)
-class LoginReturn:
-    success: bool
-    message: str
-    role: str
-
-
-
 @dataclass
 class Investor:
+    id: str
+    email: str
+    hashed_password: str
     name: str
     address: str
-    email: str
     phone_number: str
-    password: str
-    id: str = str(uuid4())
 
+    def login(self, email: str, password: str) -> None:
+        hashed_pass = hash_password(password=password)
 
-
-    # TODO: handle login rejection using exceptions
-    def login(self, email: str, password: str) -> LoginReturn:
-        hashed_pass = str(sha256(password.encode("utf-8")).hexdigest())
-
-        if self.email == email and self.password == hashed_pass:
-
-            return LoginReturn(
-                success= True,
-                message="User successfully logged in!",
-                role="investor",
-            )
+        if self.email == email and self.hashed_password == hashed_pass:
+            return
         else:
-           raise Exception("Invalid password entered!")
+            raise Exception("Invalid password entered!")
 
     def logout(self):
-        # do nothing
         pass
 
 
-# Here passwords are stored in has
-# TODO: change password name to hashed_password
+@dataclass(frozen=True)
+class RegisterInvestorReturn:
+    investor: Investor
+    plain_text_password: str
+
+
 @dataclass
 class Analyst:
+    id: str
+    email: str
+    hashed_password: str
     name: str
     address: str
-    email: str
     phone_number: str
-    password: str
-    id: str = str(uuid4())
-   
 
+    def login(self, email: str, password: str) -> None:
+        hashed_pass = hash_password(password=password)
 
-    def login(self, email: str, password: str) -> LoginReturn:
-        hashed_pass = str(sha256(password.encode("utf-8")).hexdigest())
-
-        if self.email == email and self.password == hashed_pass:
-            
-            return LoginReturn(
-                success= True,
-                message="User successfully logged in!",
-                role="analyst",
-              
-            )
+        if self.email == email and self.hashed_password == hashed_pass:
+            return
         else:
-           raise Exception("Invalid password entered!")
+            raise Exception("Invalid password entered!")
 
     def logout(self):
         pass
 
     def register_investor(
         self, name: str, address: str, phone_number: str, email: str
-    ) -> Dict[str, Investor | str]:
+    ) -> RegisterInvestorReturn:
         password = str(uuid4())[:INVESTOR_PASS_LEN]  # Autogenerate password
 
-        return {
-            "investor": Investor(
+        return RegisterInvestorReturn(
+            investor=Investor(
                 name=name,
                 address=address,
                 email=email,
                 phone_number=phone_number,
-                password=str(sha256(password.encode("utf-8")).hexdigest()),
+                hashed_password=hash_password(password=password),
                 id=str(uuid4()),
-                
             ),
-            "plain_text_password": password,
-        }
+            plain_text_password=password,
+        )
 
 
 """
@@ -171,10 +146,10 @@ class Bot:
     investor_id: str
     state: BotState = BotState.IDLE
     trades: List[Trade] = field(default_factory=list)
-    assigned_model: int = None
+    assigned_model: int = 0
     risk_appetite: RiskAppetite = RiskAppetite.LOW
-    target_return: float = None
-    duration: datetime = None
+    target_return: float = 0
+    duration: datetime = datetime.now()
     id: str = str(uuid4())
 
     def initiate_execution(self):

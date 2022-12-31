@@ -3,3 +3,5 @@ psycopg2
 pytest
 requests
 gunicorn
+python-dotenv
+flask_jwt_extended
