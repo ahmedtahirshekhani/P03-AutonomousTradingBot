@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Dict, Set
 from uuid import UUID
 
-from ..domain.model import Analyst, Investor, Bot, Trade
+from ..domain.model import Analyst, Investor, Bot, Trade, BotState
 
 
 class AnalystAbstractRepository(ABC):
@@ -240,6 +240,10 @@ class BotAbstractRepository(ABC):
     def save(self, bot: Bot) -> None:
         pass
 
+    @abstractmethod
+    def get_all_running_bots(self) -> List[Bot]:
+        pass
+
 
 class FakeBotRepository(BotAbstractRepository):
     def __init__(self):
@@ -253,6 +257,9 @@ class FakeBotRepository(BotAbstractRepository):
 
     def save(self, bot: Bot):
         self.bots[bot.id] = bot
+
+    def get_all_running_bots(self) -> List[Bot]:
+        return [bot for bot in self.bots.values() if bot.state == BotState.RUNNING]
 
 
 class BotRepository(BotAbstractRepository):
@@ -356,9 +363,9 @@ class BotRepository(BotAbstractRepository):
         bot_rows = self.cursor.fetchall()
         if len(bot_rows) == 0:
             raise Exception("No running bots found!")
-        
+
         ids = [bot_row[0] for bot_row in bot_rows]
-        
+
         trades_sql = """
             select id,bot_id, stock_id, amount, buying_price, selling_price, spread, started_at, ended_at, company_name
             from trades
@@ -391,7 +398,8 @@ class BotRepository(BotAbstractRepository):
                         ended_at=r[8],
                         company_name=r[9],
                     )
-                    for r in trades if r[1] == bot_row[0]
+                    for r in trades
+                    if r[1] == bot_row[0]
                 ],
             )
             ret.append(new_bot)

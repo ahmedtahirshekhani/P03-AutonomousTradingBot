@@ -149,6 +149,7 @@ def terminate_bot(
         fetched_bot.terminate()
         uow.bots.save(fetched_bot)
 
+
 # trigger bot execution after every n minutes
 def handle_execution(uow: AbstractUnitOfWork):
     # get all bots in running state
