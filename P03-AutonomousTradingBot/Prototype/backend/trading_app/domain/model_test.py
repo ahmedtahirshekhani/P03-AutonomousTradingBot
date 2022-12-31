@@ -47,17 +47,9 @@ def test_analyst_login():
     assert success_attempt.success == True
     assert success_attempt.message == "User successfully logged in!"
 
-    assert success_attempt.expiry.year == one_hour_later.year
-    assert success_attempt.expiry.month == one_hour_later.month
-    assert success_attempt.expiry.day == one_hour_later.day
-    assert success_attempt.expiry.hour == one_hour_later.hour
-    assert success_attempt.expiry.min == one_hour_later.min
+   
 
-    try:
-        # This should not raise an exception if token is valid
-        UUID(success_attempt.token)
-    except:
-        pytest.fail("Raised an exception due to invalid token")
+
 
     fail_attempt = new_analyst.login(
         email="ahmed@lums.com",
@@ -65,9 +57,7 @@ def test_analyst_login():
     )
     assert fail_attempt.success == False
     assert fail_attempt.message == "User failed to log in!"
-    assert fail_attempt.expiry == None
-    assert fail_attempt.token == None
-
+ 
 
 def test_analyst_logout():
     new_analyst = create_analyst()
@@ -82,20 +72,11 @@ def test_analyst_logout():
     assert success_attempt.success == True
     assert success_attempt.message == "User successfully logged in!"
 
-    assert success_attempt.expiry.year == one_hour_later.year
-    assert success_attempt.expiry.month == one_hour_later.month
-    assert success_attempt.expiry.day == one_hour_later.day
-    assert success_attempt.expiry.hour == one_hour_later.hour
-    assert success_attempt.expiry.min == one_hour_later.min
-
-    try:
-        UUID(success_attempt.token)  # This should not raise an exception
-    except:
-        pytest.fail("Raised an exception due to invalid token")
+   
+    
 
     new_analyst.logout()
-    assert new_analyst.expiry == None
-    assert new_analyst.token == None
+   
 
 
 def test_register_investor():
@@ -131,16 +112,7 @@ def test_investor_login():
     assert success_attempt.success == True
     assert success_attempt.message == "User successfully logged in!"
 
-    assert success_attempt.expiry.year == one_hour_later.year
-    assert success_attempt.expiry.month == one_hour_later.month
-    assert success_attempt.expiry.day == one_hour_later.day
-    assert success_attempt.expiry.hour == one_hour_later.hour
-    assert success_attempt.expiry.min == one_hour_later.min
-
-    try:
-        UUID(success_attempt.token)  # This should not raise an exception
-    except:
-        pytest.fail("Raised an exception due to invalid token")
+  
 
     fail_attempt = registered_invester.login(
         email="ahmed@lums.com",
@@ -148,9 +120,7 @@ def test_investor_login():
     )
     assert fail_attempt.success == False
     assert fail_attempt.message == "User failed to log in!"
-    assert fail_attempt.expiry == None
-    assert fail_attempt.token == None
-
+    
 
 def test_investor_logout():
     new_analyst = create_analyst()
@@ -170,17 +140,6 @@ def test_investor_logout():
     assert success_attempt.success == True
     assert success_attempt.message == "User successfully logged in!"
 
-    assert success_attempt.expiry.year == one_hour_later.year
-    assert success_attempt.expiry.month == one_hour_later.month
-    assert success_attempt.expiry.day == one_hour_later.day
-    assert success_attempt.expiry.hour == one_hour_later.hour
-    assert success_attempt.expiry.min == one_hour_later.min
-
-    try:
-        UUID(success_attempt.token)  # This should not raise an exception
-    except:
-        pytest.fail("Raised an exception due to invalid token")
 
     registered_invester.logout()
-    assert registered_invester.expiry == None
-    assert registered_invester.token == None
+    

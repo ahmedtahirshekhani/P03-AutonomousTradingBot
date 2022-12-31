@@ -6,8 +6,8 @@ drop table if exists trades cascade;
 drop type if exists bot_state_enum cascade;
 drop type if exists risk_appetite_enum cascade;
 
-create type bot_state_enum as enum ('idle', 'running', 'finished', 'terminated');
-create type risk_appetite_enum as enum ('low', 'mid', 'high');
+create type bot_state_enum as enum ('IDLE', 'RUNNING','TERMINATED', 'FINISHED');
+create type risk_appetite_enum as enum ('LOW', 'MEDIUM', 'HIGH');
 
 create table analysts (
     id uuid,
@@ -16,9 +16,7 @@ create table analysts (
     email varchar(100),
     phone_number varchar(100),
     password varchar(512),
-    expiry timestamp with time zone,
-    token varchar(512),
-
+  
     primary key (id)
 );
 
@@ -29,9 +27,6 @@ create table investors (
     email varchar(100),
     phone_number varchar(100),
     password varchar(512),
-    expiry timestamp with time zone,
-    token varchar(512),
-
     primary key (id)
 );
 

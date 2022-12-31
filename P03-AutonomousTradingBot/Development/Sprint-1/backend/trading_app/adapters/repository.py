@@ -345,3 +345,55 @@ class BotRepository(BotAbstractRepository):
                 bot.id,
             ],
         )
+
+    def get_all_running_bots(self) -> List[Bot]:
+        bot_sql = """
+            select id, analyst_id, investor_id, state, assigned_model, risk_appetite, target_return, duration
+            from bots
+            where bots.state = 'RUNNING'
+        """
+        self.cursor.execute(bot_sql)
+        bot_rows = self.cursor.fetchall()
+        if len(bot_rows) == 0:
+            raise Exception("No running bots found!")
+        
+        ids = [bot_row[0] for bot_row in bot_rows]
+        
+        trades_sql = """
+            select id,bot_id, stock_id, amount, buying_price, selling_price, spread, started_at, ended_at, company_name
+            from trades
+            where bot_id in %s;
+        """
+        self.cursor.execute(trades_sql, [tuple(ids)])
+        trades = self.cursor.fetchall()
+
+        ret = []
+
+        for bot_row in bot_rows:
+            new_bot = Bot(
+                id=bot_row[0],
+                analyst_id=bot_row[1],
+                investor_id=bot_row[2],
+                state=bot_row[3],
+                assigned_model=bot_row[4],
+                risk_appetite=bot_row[5],
+                target_return=bot_row[6],
+                duration=bot_row[7],
+                trades=[
+                    Trade(
+                        id=r[0],
+                        stock_id=r[2],
+                        amount=r[3],
+                        buying_price=r[4],
+                        selling_price=r[5],
+                        spread=r[6],
+                        started_at=r[7],
+                        ended_at=r[8],
+                        company_name=r[9],
+                    )
+                    for r in trades if r[1] == bot_row[0]
+                ],
+            )
+            ret.append(new_bot)
+
+        return ret

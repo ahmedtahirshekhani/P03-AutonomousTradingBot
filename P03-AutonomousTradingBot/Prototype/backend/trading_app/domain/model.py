@@ -6,6 +6,8 @@ from typing import Dict, List
 from uuid import uuid4
 from enum import Enum
 
+
+
 INVESTOR_PASS_LEN: int = 8
 
 """
@@ -37,8 +39,7 @@ Future upgrades
 class LoginReturn:
     success: bool
     message: str
-    expiry: datetime
-    token: str
+
 
 
 @dataclass
@@ -49,46 +50,28 @@ class Investor:
     phone_number: str
     password: str
     id: str = str(uuid4())
-    expiry: datetime = None
-    token: str = None
 
-    @property
-    def is_logged_in(self) -> bool:
-        # Check if session exists
-        if self.expiry is None:
-            return False
 
-        # Check if session has expired
-        if datetime.now() > self.expiry:
-            return False
-
-        return True
 
     # TODO: handle login rejection using exceptions
     def login(self, email: str, password: str) -> LoginReturn:
         hashed_pass = str(sha256(password.encode("utf-8")).hexdigest())
 
         if self.email == email and self.password == hashed_pass:
-            self.expiry = datetime.now() + timedelta(hours=1)
-            self.token = str(uuid4())
 
             return LoginReturn(
-                True,
-                "User successfully logged in!",
-                self.expiry,
-                self.token,
+                success= True,
+                message="User successfully logged in!",
             )
         else:
             return LoginReturn(
-                False,
-                "User failed to log in!",
-                None,
-                None,
+                success = False,
+                message = "Invalid password entered!",
             )
 
     def logout(self):
-        self.expiry = None
-        self.token = None
+        # do nothing
+        pass
 
 
 # Here passwords are stored in has
@@ -101,45 +84,28 @@ class Analyst:
     phone_number: str
     password: str
     id: str = str(uuid4())
-    expiry: datetime = None
-    token: str = None
+   
 
-    @property
-    def is_logged_in(self) -> bool:
-        # Check if session exists
-        if self.expiry is None:
-            return False
-
-        # Check if session has expired
-        if datetime.now() > self.expiry:
-            return False
-
-        return True
 
     def login(self, email: str, password: str) -> LoginReturn:
         hashed_pass = str(sha256(password.encode("utf-8")).hexdigest())
 
         if self.email == email and self.password == hashed_pass:
-            self.expiry = datetime.now() + timedelta(hours=1)
-            self.token = str(uuid4())
-
+            
             return LoginReturn(
-                True,
-                "User successfully logged in!",
-                self.expiry,
-                self.token,
+                success= True,
+                message="User successfully logged in!",
+              
             )
         else:
             return LoginReturn(
-                False,
-                "User failed to log in!",
-                None,
-                None,
+                success = False,
+                message = "User failed to log in!",
+              
             )
 
     def logout(self):
-        self.expiry = None
-        self.token = None
+        pass
 
     def register_investor(
         self, name: str, address: str, phone_number: str, email: str
@@ -154,6 +120,7 @@ class Analyst:
                 phone_number=phone_number,
                 password=str(sha256(password.encode("utf-8")).hexdigest()),
                 id=str(uuid4()),
+                
             ),
             "plain_text_password": password,
         }

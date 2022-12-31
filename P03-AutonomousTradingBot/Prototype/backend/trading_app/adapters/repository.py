@@ -40,8 +40,8 @@ class AnalystRepository(AnalystAbstractRepository):
 
     def add(self, analyst: Analyst):
         sql = """
-            insert into analysts (id, name, address, email, phone_number, password, expiry, token)
-            values (%s, %s, %s, %s, %s, %s, %s, %s)
+            insert into analysts (id, name, address, email, phone_number, password)
+            values (%s, %s, %s, %s, %s, %s)
         """
         self.cursor.execute(
             sql,
@@ -51,35 +51,36 @@ class AnalystRepository(AnalystAbstractRepository):
                 analyst.address,
                 analyst.email,
                 analyst.phone_number,
-                analyst.password,
-                analyst.expiry,
-                analyst.token,
+                analyst.password
             ],
         )
 
     def get(self, analyst_email: str) -> Analyst:
         sql = """
-            select id, name, address, email, phone_number, password, expiry, token
+            select id, name, address, email, phone_number, password
             from analysts
             where email = %s
         """
         self.cursor.execute(sql, [analyst_email])
         row = self.cursor.fetchone()
-        return Analyst(
+        print("row: ", row)
+        if row is None:
+            return None
+        else:
+            print("Row not none")
+            return Analyst(
             id=row[0],
             name=row[1],
             address=row[2],
             email=row[3],
             phone_number=row[4],
             password=row[5],
-            expiry=row[6],
-            token=row[7],
         )
 
     def save(self, analyst: Analyst):
         sql = """
             update analysts 
-            set name=%s, address=%s, email=%s, phone_number=%s, password=%s, expiry=%s, token=%s
+            set name=%s, address=%s, email=%s, phone_number=%s, password=%s
             where id=%s
         """
         self.cursor.execute(
@@ -90,8 +91,6 @@ class AnalystRepository(AnalystAbstractRepository):
                 analyst.email,
                 analyst.phone_number,
                 analyst.password,
-                analyst.expiry,
-                analyst.token,
                 analyst.id,
             ],
         )
@@ -132,8 +131,8 @@ class InvestorRepository(InvestorAbstractRepository):
 
     def add(self, investor: Investor):
         sql = """
-            insert into investors (id, name, address, email, phone_number, password, expiry, token)
-            values (%s, %s, %s, %s, %s, %s, %s, %s)
+            insert into investors (id, name, address, email, phone_number, password)
+            values (%s, %s, %s, %s, %s, %s)
         """
         self.cursor.execute(
             sql,
@@ -144,34 +143,34 @@ class InvestorRepository(InvestorAbstractRepository):
                 investor.email,
                 investor.phone_number,
                 investor.password,
-                investor.expiry,
-                investor.token,
             ],
         )
 
     def get(self, investor_email: str) -> Investor:
         sql = """
-            select id, name, address, email, phone_number, password, expiry, token
+            select id, name, address, email, phone_number, password
             from investors
             where email = %s
         """
         self.cursor.execute(sql, [investor_email])
         row = self.cursor.fetchone()
-        return Investor(
+        print("row", row)
+        if row is None:
+            return None
+        else:
+            return Investor(
             id=row[0],
             name=row[1],
             address=row[2],
             email=row[3],
             phone_number=row[4],
-            password=row[5],
-            expiry=row[6],
-            token=row[7],
+            password=row[5]
         )
 
     def save(self, investor: Investor):
         sql = """
             update investors
-            set name=%s, address=%s, email=%s, phone_number=%s, password=%s, expiry=%s, token=%s
+            set name=%s, address=%s, email=%s, phone_number=%s, password=%s
             where id=%s
         """
         self.cursor.execute(
@@ -182,8 +181,6 @@ class InvestorRepository(InvestorAbstractRepository):
                 investor.email,
                 investor.phone_number,
                 investor.password,
-                investor.expiry,
-                investor.token,
                 investor.id,
             ],
         )
@@ -225,13 +222,16 @@ class BotRepository(BotAbstractRepository):
             insert into bots (id, analyst_id, investor_id, state, assigned_model, risk_appetite, target_return, duration)
             values (%s, %s, %s, %s, %s, %s, %s, %s)
         """
+        print(bot)
+        finalState = bot.state.name
+
         self.cursor.execute(
             sql,
             [
                 bot.id,
                 bot.analyst_id,
                 bot.investor_id,
-                bot.state,
+                finalState,
                 bot.assigned_model,
                 bot.risk_appetite,
                 bot.target_return,
