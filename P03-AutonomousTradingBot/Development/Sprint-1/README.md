@@ -47,6 +47,9 @@ LIST OF REQUIREMENTS COMPLETED SO FAR
 
 HOW TO ACCESS THE SYSTEM
 
+Frontend: https://autonomous-trading-bot.vercel.app/
+Backend on GCP and will run on-demand (due to pricing constraints)
+
 
 ---
 
