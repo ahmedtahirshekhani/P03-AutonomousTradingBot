@@ -4,8 +4,15 @@ import AssignBot from '../../components/cards/AssignBot';
 import AnalystLayout from '../../components/layouts/AnalystLayout';
 import { getAllInvestors } from '../../services/auth';
 
+interface Investor {
+	id: string;
+	name: string;
+	email: string;
+	phone_number: string;
+}
+
 const ViewInvestors: NextPage = () => {
-	const [investors, setInvestors] = useState([]);
+	const [investors, setInvestors] = useState<Array<Investor>>([]);
 
 	useEffect(() => {
 		getAllInvestors().then(res => {

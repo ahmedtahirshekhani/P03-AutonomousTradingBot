@@ -9,11 +9,19 @@ import {
 	terminateBot,
 } from '../../services/auth';
 
+interface Bot {
+	id: string;
+	state: string;
+	risk_appetite: string;
+	target_return: string;
+	duration: string;
+}
+
 const Home: NextPage = () => {
 	const router = useRouter();
 	const investor_id = router.query.investor_id;
 
-	const [bots, setBots] = useState([]);
+	const [bots, setBots] = useState<Array<Bot>>([]);
 
 	useEffect(() => {
 		if (!investor_id) return;
