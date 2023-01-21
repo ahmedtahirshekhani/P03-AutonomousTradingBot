@@ -2,11 +2,13 @@
 
 1. Setup the virtual environment
    <code>python -m venv venv</code>
-2. Install the requirements first
-   <code>pip install -r requirements.txt</code>
-3. Activate the virtual environment
+2. Activate the virtual environment
    <code>venv\Scripts\activate</code>
-4. Run the flask server locally
+3. Install the requirements first
+   <code>pip install -r requirements.txt</code>
+4. Move into the app api folder to run backend
+   <code>cd trading_app/api</code>
+5. Run the flask server locally
    <code>flask --app flask_app --debug run </code>
 
 ## To deploy backend to gcloud
