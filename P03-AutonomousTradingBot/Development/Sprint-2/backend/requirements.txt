@@ -1,0 +1,14 @@
+Flask
+psycopg2
+pytest
+requests
+gunicorn
+python-dotenv
+flask_jwt_extended
+keras==2.9.0
+Keras-Preprocessing==1.1.2
+keras-vis==0.4.1
+scikit-learn
+numpy
+pandas
+tensorflow
