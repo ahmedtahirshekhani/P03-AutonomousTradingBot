@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List
+from typing import List, Dict
 from uuid import uuid4
 from enum import Enum
 from .utils import hash_password
@@ -144,16 +144,44 @@ class Trade:
 class Bot:
     analyst_id: str
     investor_id: str
+    stocks_ticker: str
+    price: Dict[int, float] # timestamp -> price
+    initial_balance: float
+    current_balance: float
+    target_return: float # Ex: 5% / 10% / 15%
+    risk_appetite: RiskAppetite # Ex: 5% / 10% / 15%
+
+    # Default values
+    id: str = str(uuid4())
+    in_trade: bool = False
     state: BotState = BotState.IDLE
     trades: List[Trade] = field(default_factory=list)
+    start_time: datetime = datetime.now()
+    duration: int = 0
     assigned_model: int = 0
-    risk_appetite: RiskAppetite = RiskAppetite.LOW
-    target_return: float = 0
-    duration: datetime = datetime.now()
-    id: str = str(uuid4())
 
     def initiate_execution(self):
         self.state = BotState.RUNNING
 
     def terminate(self):
         self.state = BotState.TERMINATED
+    
+    def handle_execution(self):
+        # Do trade etc
+        '''
+        1.  Fetch the last close price from api
+        1.1 Append this price into the bot
+        2.  If the bot is inside a trade;
+        2.1     Calculate the profit/loss for this trade
+        2.2     Stop bot if stopping conditions are met
+        2.2.1       If profit loss matches target return: exit trade, stop bot
+        2.3     Check if it is the right time to exit the trade (exit indicator)
+        2.4     If yes, exit the trade
+        2.5     Append this action to the bot
+        2.6     Else, do nothing
+        3.  Else
+        3.1     Check if it is the right time to enter a trade (confirmation indicator)
+        3.2     If yes, enter a trade
+        3.3     Append this action to the bot
+        3.3     Else, do nothing
+        '''

@@ -1,4 +1,4 @@
-from flask import jsonify
+
 def successMessage(message, data):
     for key in data:
         if isinstance(data[key], float):
@@ -15,4 +15,5 @@ def errorMessage(message):
         'success': False,
         'message': message
     }
+
 
