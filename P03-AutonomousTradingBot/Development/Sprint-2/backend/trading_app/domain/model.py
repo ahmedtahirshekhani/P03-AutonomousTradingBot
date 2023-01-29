@@ -1,9 +1,11 @@
+import random
+
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import List, Dict
 from uuid import uuid4
 from enum import Enum
-from .utils import hash_password
+from .utils import hash_password, get_random_id
 
 INVESTOR_PASS_LEN: int = 8
 
@@ -127,17 +129,25 @@ class RiskAppetite(Enum):
     HIGH = 3
 
 
-@dataclass(frozen=True)
+class TradeType(Enum):
+    Call = 1
+    Put = 2
+
+
+@dataclass
 class Trade:
-    stock_id: str
+    id: str
     amount: float
-    buying_price: float
-    selling_price: float
-    spread: float
+    start_price: float
     started_at: datetime
-    ended_at: datetime
-    company_name: str
-    id: str = str(uuid4())
+    trade_type: TradeType
+    ended_at: datetime = datetime.max
+    end_price: float = 0
+    is_profit: bool = False
+    # buying_price: float
+    # selling_price: float
+    # spread: float
+    # company_name: str
 
 
 @dataclass
@@ -145,11 +155,11 @@ class Bot:
     analyst_id: str
     investor_id: str
     stocks_ticker: str
-    price: Dict[int, float] # timestamp -> price
+    prices: Dict[int, float]  # timestamp -> price
     initial_balance: float
     current_balance: float
-    target_return: float # Ex: 5% / 10% / 15%
-    risk_appetite: RiskAppetite # Ex: 5% / 10% / 15%
+    target_return: float  # Ex: 5% / 10% / 15%
+    risk_appetite: RiskAppetite  # Ex: 5% / 10% / 15%
 
     # Default values
     id: str = str(uuid4())
@@ -165,23 +175,81 @@ class Bot:
 
     def terminate(self):
         self.state = BotState.TERMINATED
-    
-    def handle_execution(self):
-        # Do trade etc
-        '''
-        1.  Fetch the last close price from api
-        1.1 Append this price into the bot
-        2.  If the bot is inside a trade;
-        2.1     Calculate the profit/loss for this trade
-        2.2     Stop bot if stopping conditions are met
-        2.2.1       If profit loss matches target return: exit trade, stop bot
-        2.3     Check if it is the right time to exit the trade (exit indicator)
-        2.4     If yes, exit the trade
-        2.5     Append this action to the bot
-        2.6     Else, do nothing
-        3.  Else
-        3.1     Check if it is the right time to enter a trade (confirmation indicator)
-        3.2     If yes, enter a trade
-        3.3     Append this action to the bot
-        3.3     Else, do nothing
-        '''
+
+    def close_trade(self, timestamp: int, price: float):
+        self.in_trade = False
+        last_trade = self.trades[-1]
+
+        last_trade.ended_at = datetime.fromtimestamp(timestamp)
+        last_trade.end_price = price
+        price_diff = 0
+
+        if last_trade.trade_type == TradeType.Call:
+            price_diff = last_trade.end_price - last_trade.start_price
+            self.current_balance += price_diff
+        else:
+            price_diff = last_trade.start_price - last_trade.end_price
+            self.current_balance += price_diff
+
+        if price_diff > 0:
+            last_trade.is_profit = True
+
+        self.trades[-1] = last_trade
+
+    def handle_execution(self, timestamp: int, price: float):
+        """
+        Trading Algorithm
+
+        Fetch the last close price
+        Append the price into the bot
+        
+        Check bot stopping conditions
+        If met
+            Stop the bot
+            Exit trade if inside one
+
+        If the bot is inside a trade
+            Check if it is the right time to exit the trade (exit indicator)
+            If yes
+               Exit the trade
+               Append this action to the bot
+        Else
+            Check if it is the right time to enter a trade (confirmation indicator)
+            If yes
+               Enter a trade
+               Append this action to the bot
+        """
+
+        if self.state != BotState.RUNNING:
+            raise Exception("Bot in not in running state")
+
+        self.prices[timestamp] = price
+        should_stop_bot = True if random.randint(0, 1) == 1 else False
+
+        if should_stop_bot:
+            if self.in_trade:
+                self.close_trade(timestamp=timestamp, price=price)
+
+            self.state = BotState.FINISHED
+
+        if self.in_trade:
+            # Exit strategies
+            should_close_trade = True if random.randint(0, 1) == 1 else False
+
+            if should_close_trade:
+                self.close_trade(timestamp=timestamp, price=price)
+        else:
+            # Entry strategies
+            indicator, amount = random.randint(-1, 1), 100
+            should_enter_trade = False if indicator == 0 else True
+
+            if should_enter_trade:
+                self.in_trade = True
+                trade = Trade(
+                    id=get_random_id(),
+                    trade_type=TradeType.Call if indicator == 1 else TradeType.Put,
+                    amount=amount,
+                    start_price=price,
+                    started_at=datetime.fromtimestamp(timestamp),
+                )
+                self.trades.append(trade)
