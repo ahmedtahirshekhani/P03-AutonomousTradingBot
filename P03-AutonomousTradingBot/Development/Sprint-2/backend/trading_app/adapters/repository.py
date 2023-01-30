@@ -344,7 +344,7 @@ class BotRepository(BotAbstractRepository):
                     is_profit=r[8],
                 )
                 for r in trades_rows
-                if r[1] == bot_row[0]
+                if r[1] == bot_row[1]
             ]
         )
 
@@ -419,7 +419,7 @@ class BotRepository(BotAbstractRepository):
                     is_profit=r[8],
                 )
                 for r in trades
-                if r[1] == bot_row[0]
+                if r[1] == bot_row[1]
             ]
             )
             ret.append(new_bot)
