@@ -152,22 +152,22 @@ class Trade:
 
 @dataclass
 class Bot:
+    id: str
     analyst_id: str
     investor_id: str
     stocks_ticker: str
-    prices: Dict[int, float]  # timestamp -> price
     initial_balance: float
     current_balance: float
     target_return: float  # Ex: 5% / 10% / 15%
     risk_appetite: RiskAppetite  # Ex: 5% / 10% / 15%
 
     # Default values
-    id: str = str(uuid4())
     in_trade: bool = False
     state: BotState = BotState.IDLE
+    prices: Dict[int, float] = field(default_factory=dict)  # timestamp -> price
     trades: List[Trade] = field(default_factory=list)
     start_time: datetime = datetime.now()
-    duration: int = 0
+    end_time: datetime = datetime.max
     assigned_model: int = 0
 
     def initiate_execution(self):
@@ -202,7 +202,7 @@ class Bot:
 
         Fetch the last close price
         Append the price into the bot
-        
+
         Check bot stopping conditions
         If met
             Stop the bot

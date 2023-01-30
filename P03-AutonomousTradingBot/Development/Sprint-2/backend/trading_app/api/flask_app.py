@@ -1,6 +1,5 @@
 import datetime
 from flask import Flask, request, jsonify
-import requests
 from ..entrypoint import commands, unit_of_work, queries
 from flask_jwt_extended import (
     JWTManager,
@@ -158,11 +157,10 @@ def add_bot():
     commands.add_bot(
         analyst_id,
         request.json["investor_id"],
-        request.json["trades"],
-        request.json["assigned_model"],
+        request.json["stocks_ticker"],
+        request.json["balance"],
         request.json["risk_appetite"],
         request.json["target_return"],
-        request.json["duration"],
         uow=unit_of_work.UnitOfWork(),
     )
 

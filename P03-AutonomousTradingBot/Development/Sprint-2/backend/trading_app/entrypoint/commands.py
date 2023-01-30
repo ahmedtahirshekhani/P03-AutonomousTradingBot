@@ -9,16 +9,13 @@ from ..domain.model import (
 )
 from hashlib import sha256
 from datetime import datetime
-from typing import Dict, List
+from typing import List
 from uuid import uuid4
 
 import numpy as np
 import pandas as pd
 import keras
-import sklearn
 from sklearn.preprocessing import MinMaxScaler
-import tensorflow as tf
-from keras.utils import to_categorical
 
 import os
 import requests
@@ -118,24 +115,22 @@ Bot module
 def add_bot(
     analyst_id: str,
     investor_id: str,
-    trades: List[Trade],
-    assigned_model: int,
+    stocks_ticker: str,
+    balance: float,
     risk_appetite: RiskAppetite,
     target_return: float,
-    duration: datetime,
     uow: AbstractUnitOfWork,
 ):
 
     new_bot = Bot(
+        id=str(uuid4()),
         analyst_id=analyst_id,
         investor_id=investor_id,
-        state=BotState.IDLE,
-        trades=trades,
-        assigned_model=assigned_model,
-        risk_appetite=risk_appetite,
+        stocks_ticker=stocks_ticker,
+        initial_balance=balance,
+        current_balance=balance,
         target_return=target_return,
-        duration=duration,
-        id=str(uuid4()),
+        risk_appetite=risk_appetite,
     )
     with uow:
         uow.bots.add(new_bot)
@@ -170,12 +165,21 @@ def handle_execution(uow: AbstractUnitOfWork):
 
         # Remove duplicate values
         stocks_ticker_list = list(set(stocks_ticker_list))
+        stock_prices = {}
 
-        # TODO:
-        # 1.  Fetch the last close price from api for all the stocks, bot is runnning on
+        # Fetch the last close price from api for all the stocks
+        for stock_ticker in stocks_ticker_list:
+            timestamp = datetime.now().timestamp()
+            polygon_api = f"https://api.polygon.io/v2/aggs/ticker/{stock_ticker}/range/1/hour/{timestamp}/{timestamp}?adjusted=true&sort=asc&limit=120&apiKey={os.environ.get('POLYGON_API_KEY')}"
+            response = requests.get(polygon_api)
+            res = response.json()
+            stock_prices[stock_ticker] = res.results[-1].c, res.results[-1].t
 
         for bot in fetch_all_running_bots:
-            bot.handle_execution()
+            bot.handle_execution(
+                price=stock_prices[bot.stocks_ticker][0],
+                timestamp=stock_prices[bot.stocks_ticker][1],
+            )
 
         return fetch_all_running_bots
 
