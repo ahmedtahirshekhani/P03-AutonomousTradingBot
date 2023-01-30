@@ -286,3 +286,5 @@ def get_all_stock_details():
         status = 400
 
     return ret, status
+
+

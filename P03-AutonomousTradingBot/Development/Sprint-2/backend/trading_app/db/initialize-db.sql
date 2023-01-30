@@ -11,6 +11,7 @@ create type bot_state_enum as enum ('IDLE', 'RUNNING', 'FINISHED', 'TERMINATED')
 create type risk_appetite_enum as enum ('LOW', 'MID', 'HIGH');
 create type trade_type_enum as enum ('CALL', 'PUT');
 
+
 create table analysts (
     id uuid,
     name varchar(100),
@@ -33,6 +34,7 @@ create table investors (
 
     primary key (id)
 );
+
 
 create table bots (
     id uuid,

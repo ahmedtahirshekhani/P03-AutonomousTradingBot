@@ -321,25 +321,31 @@ class BotRepository(BotAbstractRepository):
             id=bot_row[0],
             analyst_id=bot_row[1],
             investor_id=bot_row[2],
-            state=bot_row[3],
-            assigned_model=bot_row[4],
-            risk_appetite=bot_row[5],
+            stocks_ticker = bot_row[3],
+            initial_balance = bot_row[4],
+            current_balance = bot_row[5],
             target_return=bot_row[6],
-            duration=bot_row[7],
+            risk_appetite=bot_row[7],
+            in_trade=bot_row[8],
+            state=bot_row[9],
+            prices = bot_row[10],
+            start_time=bot_row[11],
+            end_time=bot_row[12],
+            assigned_model=bot_row[13],
             trades=[
                 Trade(
                     id=r[0],
-                    stock_id=r[1],
-                    amount=r[2],
-                    buying_price=r[3],
-                    selling_price=r[4],
-                    spread=r[5],
-                    started_at=r[6],
-                    ended_at=r[7],
-                    company_name=r[8],
+                    amount=r[1],
+                    start_price=r[2],
+                    started_at=r[3],
+                    trade_type=r[4],
+                    ended_at=r[5],
+                    end_price=r[6],
+                    is_profit=r[7],
                 )
                 for r in trades_rows
-            ],
+                if r[1] == bot_row[0]
+            ]
         )
 
     def save(self, bot: Bot):
@@ -389,28 +395,33 @@ class BotRepository(BotAbstractRepository):
         for bot_row in bot_rows:
             new_bot = Bot(
                 id=bot_row[0],
-                analyst_id=bot_row[1],
-                investor_id=bot_row[2],
-                state=bot_row[3],
-                assigned_model=bot_row[4],
-                risk_appetite=bot_row[5],
-                target_return=bot_row[6],
-                duration=bot_row[7],
-                trades=[
-                    Trade(
-                        id=r[0],
-                        stock_id=r[2],
-                        amount=r[3],
-                        buying_price=r[4],
-                        selling_price=r[5],
-                        spread=r[6],
-                        started_at=r[7],
-                        ended_at=r[8],
-                        company_name=r[9],
-                    )
-                    for r in trades
-                    if r[1] == bot_row[0]
-                ],
+            analyst_id=bot_row[1],
+            investor_id=bot_row[2],
+            stocks_ticker = bot_row[3],
+            initial_balance = bot_row[4],
+            current_balance = bot_row[5],
+            target_return=bot_row[6],
+            risk_appetite=bot_row[7],
+            in_trade=bot_row[8],
+            state=bot_row[9],
+            prices = bot_row[10],
+            start_time=bot_row[11],
+            end_time=bot_row[12],
+            assigned_model=bot_row[13],
+            trades=[
+                Trade(
+                    id=r[0],
+                    amount=r[1],
+                    start_price=r[2],
+                    started_at=r[3],
+                    trade_type=r[4],
+                    ended_at=r[5],
+                    end_price=r[6],
+                    is_profit=r[7],
+                )
+                for r in trades
+                if r[1] == bot_row[0]
+            ]
             )
             ret.append(new_bot)
 
