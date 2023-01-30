@@ -351,7 +351,7 @@ class BotRepository(BotAbstractRepository):
     def save(self, bot: Bot):
         sql = """
             update bots
-            set analyst_id=%s, investor_id=%s, state=%s, assigned_model=%s, risk_appetite=%s, target_return=%s, duration=%s
+            set analyst_id=%s, investor_id=%s, stocks_ticker=%s, initial_balance=%s, current_balance=%s, target_return=%s, risk_appetite=%s, in_trade=%s, state=%s, prices=%s, start_time=%s, end_time=%s, assigned_model=%s
             where id=%s
         """
         finalState = bot.state.name
@@ -360,17 +360,25 @@ class BotRepository(BotAbstractRepository):
             [
                 bot.analyst_id,
                 bot.investor_id,
-                finalState,
-                bot.assigned_model,
-                bot.risk_appetite,
+                bot.stocks_ticker,
+                bot.initial_balance,
+                bot.current_balance,
                 bot.target_return,
+                bot.risk_appetite.name,
+                bot.in_trade,
+                finalState,
+                bot.prices,
+                bot.start_time,
+                bot.end_time,
+                bot.assigned_model,
                 bot.id,
             ],
+
         )
 
     def get_all_running_bots(self) -> List[Bot]:
         bot_sql = """
-            select id, analyst_id, investor_id, state, assigned_model, risk_appetite, target_return, duration
+            select id, analyst_id, investor_id, stocks_ticker, initial_balance, current_balance, target_return, risk_appetite, in_trade, state, prices, start_time, end_time, assigned_model
             from bots
             where bots.state = 'RUNNING'
         """
