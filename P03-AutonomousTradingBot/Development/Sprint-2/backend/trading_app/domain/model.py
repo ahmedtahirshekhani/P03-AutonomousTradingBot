@@ -221,7 +221,7 @@ class Bot:
         """
 
         if self.state != BotState.RUNNING:
-            raise Exception("Bot in not in running state")
+            raise Exception("Bot is not in running state")
 
         self.prices[timestamp] = price
         should_stop_bot = True if random.randint(0, 1) == 1 else False

@@ -254,7 +254,7 @@ def get_all_investors():
 @app.route(prefix + "/stock/engro", methods=["GET"])
 def get_stock_details():
     try:
-        Open,High,Low,Close,ATR = commands.predict('../../../ML/Engro.h5','../../../ML/ENGRO.csv')
+        Open,High,Low,Close,ATR = queries.predict('../../../ML/Engro.h5','../../../ML/ENGRO.csv')
         retObj = {}
         
         retObj['Open'] = float(Open)
@@ -277,7 +277,7 @@ def get_all_stock_details():
         with open('../datafiles/stocktickers.txt', 'r') as f:
             stocks = f.readlines()
         stocks = [x.strip() for x in stocks]
-        stockDetails = commands.getStockDetails(stocks)
+        stockDetails = queries.get_stock_details(stocks)
         ret = successMessage("Stock details fetched successfully!", stockDetails)
         status = 200
     except Exception as e:
