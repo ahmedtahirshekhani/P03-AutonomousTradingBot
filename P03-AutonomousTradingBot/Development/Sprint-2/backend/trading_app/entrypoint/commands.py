@@ -62,6 +62,7 @@ def register_investor(
     address: str,
     email: str,
     phone_number: str,
+    ntn_number: str,
     analyst_email: str,
     uow: AbstractUnitOfWork,
 ) -> RegisterInvestorReturn:
@@ -79,6 +80,7 @@ def register_investor(
             address=address,
             email=email,
             phone_number=phone_number,
+            ntn_number=ntn_number,
         )
         uow.investors.add(ret.investor)
         return ret

@@ -5,9 +5,11 @@ drop table if exists trades cascade;
 
 drop type if exists bot_state_enum cascade;
 drop type if exists risk_appetite_enum cascade;
+drop type if exists trade_type_enum cascade;
 
-create type bot_state_enum as enum ('IDLE', 'RUNNING','TERMINATED', 'FINISHED');
-create type risk_appetite_enum as enum ('LOW', 'MEDIUM', 'HIGH');
+create type bot_state_enum as enum ('IDLE', 'RUNNING', 'FINISHED', 'TERMINATED');
+create type risk_appetite_enum as enum ('LOW', 'MID', 'HIGH');
+create type trade_type_enum as enum ('CALL', 'PUT');
 
 create table analysts (
     id uuid,
@@ -15,7 +17,7 @@ create table analysts (
     address varchar(500),
     email varchar(100),
     phone_number varchar(100),
-    password varchar(512),
+    hashed_password varchar(512),
   
     primary key (id)
 );
@@ -26,7 +28,9 @@ create table investors (
     address varchar(500),
     email varchar(100),
     phone_number varchar(100),
-    password varchar(512),
+    hashed_password varchar(512),
+    ntn_number varchar(100),
+
     primary key (id)
 );
 
@@ -34,11 +38,17 @@ create table bots (
     id uuid,
     analyst_id uuid,
     investor_id uuid,
-    state bot_state_enum,
-    assigned_model smallint,
-    risk_appetite risk_appetite_enum,
+    stocks_ticker varchar(20),
+    initial_balance numeric,
+    current_balance numeric,
     target_return numeric,
-    duration timestamp with time zone,
+    risk_appetite risk_appetite_enum,
+    in_trade boolean,
+    state bot_state_enum,
+    prices json,
+    start_time timestamp with time zone,
+    end_time timestamp with time zone,
+    assigned_model smallint,
 
     primary key (id),
     foreign key (analyst_id)
@@ -50,14 +60,13 @@ create table bots (
 create table trades (
     id uuid,
     bot_id uuid,
-    stock_id varchar(100),
     amount numeric,
-    buying_price numeric,
-    selling_price numeric,
-    spread numeric,
+    start_price numeric,
     started_at timestamp with time zone,
+    trade_type trade_type_enum,
     ended_at timestamp with time zone,
-    company_name varchar(100),
+    end_price numeric,
+    is_profit boolean,
 
     primary key (id),
     foreign key (bot_id)

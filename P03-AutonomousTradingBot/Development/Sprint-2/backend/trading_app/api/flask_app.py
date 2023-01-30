@@ -57,6 +57,7 @@ def register_investor():
             request.json["address"],
             request.json["investor_email"],
             request.json["phone_number"],
+            request.json["ntn_number"],
             email,
             unit_of_work.UnitOfWork(),
         )

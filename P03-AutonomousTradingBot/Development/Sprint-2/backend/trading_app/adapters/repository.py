@@ -44,7 +44,7 @@ class AnalystRepository(AnalystAbstractRepository):
 
     def add(self, analyst: Analyst):
         sql = """
-            insert into analysts (id, name, address, email, phone_number, password)
+            insert into analysts (id, name, address, email, phone_number, hashed_password)
             values (%s, %s, %s, %s, %s, %s)
         """
         self.cursor.execute(
@@ -61,7 +61,7 @@ class AnalystRepository(AnalystAbstractRepository):
 
     def get(self, analyst_email: str) -> Analyst:
         sql = """
-            select id, name, address, email, phone_number, password
+            select id, name, address, email, phone_number, hashed_password
             from analysts
             where email = %s
         """
@@ -83,7 +83,7 @@ class AnalystRepository(AnalystAbstractRepository):
     def save(self, analyst: Analyst):
         sql = """
             update analysts 
-            set name=%s, address=%s, email=%s, phone_number=%s, password=%s
+            set name=%s, address=%s, email=%s, phone_number=%s, hashed_password=%s
             where id=%s
         """
         self.cursor.execute(
@@ -145,7 +145,7 @@ class InvestorRepository(InvestorAbstractRepository):
 
     def add(self, investor: Investor):
         sql = """
-            insert into investors (id, name, address, email, phone_number, password)
+            insert into investors (id, name, address, email, phone_number, hashed_password, ntn_number)
             values (%s, %s, %s, %s, %s, %s)
         """
         self.cursor.execute(
@@ -157,12 +157,13 @@ class InvestorRepository(InvestorAbstractRepository):
                 investor.email,
                 investor.phone_number,
                 investor.hashed_password,
+                investor.ntn_number,
             ],
         )
 
     def get(self, investor_email: str) -> Investor:
         sql = """
-            select id, name, address, email, phone_number, password
+            select id, name, address, email, phone_number, hashed_password, ntn_number
             from investors
             where email = %s
         """
@@ -179,11 +180,12 @@ class InvestorRepository(InvestorAbstractRepository):
                 email=row[3],
                 phone_number=row[4],
                 hashed_password=row[5],
+                ntn_number=row[6]
             )
 
     def get_all(self) -> List[Investor]:
         sql = """
-            select id, name, address, email, phone_number, password
+            select id, name, address, email, phone_number, hashed_password, ntn_number
             from investors
         """
         self.cursor.execute(sql)
@@ -199,6 +201,7 @@ class InvestorRepository(InvestorAbstractRepository):
                     email=row[3],
                     phone_number=row[4],
                     hashed_password=row[5],
+                    ntn_number=row[6]
                 )
                 for row in rows
             ]
@@ -206,7 +209,7 @@ class InvestorRepository(InvestorAbstractRepository):
     def save(self, investor: Investor):
         sql = """
             update investors
-            set name=%s, address=%s, email=%s, phone_number=%s, password=%s
+            set name=%s, address=%s, email=%s, phone_number=%s, hashed_password=%s, ntn_number=%s
             where id=%s
         """
         self.cursor.execute(
@@ -217,6 +220,7 @@ class InvestorRepository(InvestorAbstractRepository):
                 investor.email,
                 investor.phone_number,
                 investor.hashed_password,
+                investor.ntn_number,
                 investor.id,
             ],
         )
@@ -267,12 +271,12 @@ class BotRepository(BotAbstractRepository):
         self.connection = connection
         self.cursor = connection.cursor()
 
+    # TODO: add new trades here and on save also
     def add(self, bot: Bot):
         sql = """
-            insert into bots (id, analyst_id, investor_id, state, assigned_model, risk_appetite, target_return, duration)
-            values (%s, %s, %s, %s, %s, %s, %s, %s)
+            insert into bots (id, analyst_id, investor_id, stocks_ticker, initial_balance, current_balance, target_return, risk_appetite, in_trade, state, prices, start_time, end_time, assigned_model)
+            values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
-        finalState = bot.state.name
 
         self.cursor.execute(
             sql,
@@ -280,17 +284,23 @@ class BotRepository(BotAbstractRepository):
                 bot.id,
                 bot.analyst_id,
                 bot.investor_id,
-                finalState,
-                bot.assigned_model,
-                bot.risk_appetite,
+                bot.stocks_ticker,
+                bot.initial_balance,
+                bot.current_balance,
                 bot.target_return,
-                bot.duration,
+                bot.risk_appetite.name,
+                bot.in_trade,
+                bot.state.name,
+                bot.prices,
+                bot.start_time,
+                bot.end_time,
+                bot.assigned_model,
             ],
         )
 
     def get(self, bot_id: str) -> Bot:
         bot_sql = """
-            select id, analyst_id, investor_id, state, assigned_model, risk_appetite, target_return, duration
+            select id, analyst_id, investor_id, stocks_ticker, initial_balance, current_balance, target_return, risk_appetite, in_trade, state, prices, start_time, end_time, assigned_model
             from bots
             where id = %s
         """

@@ -42,6 +42,7 @@ class Investor:
     name: str
     address: str
     phone_number: str
+    ntn_number: str
 
     def login(self, email: str, password: str) -> None:
         hashed_pass = hash_password(password=password)
@@ -82,18 +83,19 @@ class Analyst:
         pass
 
     def register_investor(
-        self, name: str, address: str, phone_number: str, email: str
+        self, name: str, address: str, phone_number: str, email: str, ntn_number: str
     ) -> RegisterInvestorReturn:
         password = str(uuid4())[:INVESTOR_PASS_LEN]  # Autogenerate password
 
         return RegisterInvestorReturn(
             investor=Investor(
+                id=str(uuid4()),
                 name=name,
                 address=address,
                 email=email,
                 phone_number=phone_number,
                 hashed_password=hash_password(password=password),
-                id=str(uuid4()),
+                ntn_number=ntn_number,
             ),
             plain_text_password=password,
         )
@@ -130,8 +132,8 @@ class RiskAppetite(Enum):
 
 
 class TradeType(Enum):
-    Call = 1
-    Put = 2
+    CALL = 1
+    PUT = 2
 
 
 @dataclass
@@ -143,11 +145,10 @@ class Trade:
     trade_type: TradeType
     ended_at: datetime = datetime.max
     end_price: float = 0
-    is_profit: bool = False
+    is_profit: bool = False # Was this a profitable trade
     # buying_price: float
     # selling_price: float
     # spread: float
-    # company_name: str
 
 
 @dataclass
@@ -155,11 +156,11 @@ class Bot:
     id: str
     analyst_id: str
     investor_id: str
-    stocks_ticker: str
+    stocks_ticker: str # Identifier of stock
     initial_balance: float
     current_balance: float
-    target_return: float  # Ex: 5% / 10% / 15%
-    risk_appetite: RiskAppetite  # Ex: 5% / 10% / 15%
+    target_return: float
+    risk_appetite: RiskAppetite  # Ex: 5% / 10% / 20%
 
     # Default values
     in_trade: bool = False
@@ -184,7 +185,7 @@ class Bot:
         last_trade.end_price = price
         price_diff = 0
 
-        if last_trade.trade_type == TradeType.Call:
+        if last_trade.trade_type == TradeType.CALL:
             price_diff = last_trade.end_price - last_trade.start_price
             self.current_balance += price_diff
         else:
@@ -247,7 +248,7 @@ class Bot:
                 self.in_trade = True
                 trade = Trade(
                     id=get_random_id(),
-                    trade_type=TradeType.Call if indicator == 1 else TradeType.Put,
+                    trade_type=TradeType.CALL if indicator == 1 else TradeType.PUT,
                     amount=amount,
                     start_price=price,
                     started_at=datetime.fromtimestamp(timestamp),

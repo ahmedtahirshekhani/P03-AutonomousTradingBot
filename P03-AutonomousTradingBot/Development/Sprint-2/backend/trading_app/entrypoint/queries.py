@@ -63,7 +63,7 @@ def get_stock_details(stocks):
     return stockDetails
 
 def get_last_close_price(stock_ticker: str, timestamp: int):
-    polygon_api = f"https://api.polygon.io/v2/aggs/ticker/{stock_ticker}/range/1/hour/{timestamp}/{timestamp}?adjusted=true&sort=asc&limit=120&apiKey={os.environ.get('POLYGON_API_KEY')}"
+    polygon_api = f"https://api.polygon.io/v2/aggs/ticker/{stock_ticker}/range/1/hour/{timestamp}/{timestamp}?adjusted=true&sort=asc&apiKey={os.environ.get('POLYGON_API_KEY')}"
     response = requests.get(polygon_api)
     res = response.json()
     return res.results[-1].c, res.results[-1].t
