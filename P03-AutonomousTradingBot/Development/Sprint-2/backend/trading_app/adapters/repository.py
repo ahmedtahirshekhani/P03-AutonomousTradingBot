@@ -335,13 +335,13 @@ class BotRepository(BotAbstractRepository):
             trades=[
                 Trade(
                     id=r[0],
-                    amount=r[1],
-                    start_price=r[2],
-                    started_at=r[3],
-                    trade_type=r[4],
-                    ended_at=r[5],
-                    end_price=r[6],
-                    is_profit=r[7],
+                    amount=r[2],
+                    start_price=r[3],
+                    started_at=r[4],
+                    trade_type=r[5],
+                    ended_at=r[6],
+                    end_price=r[7],
+                    is_profit=r[8],
                 )
                 for r in trades_rows
                 if r[1] == bot_row[0]
@@ -364,7 +364,6 @@ class BotRepository(BotAbstractRepository):
                 bot.assigned_model,
                 bot.risk_appetite,
                 bot.target_return,
-                bot.duration,
                 bot.id,
             ],
         )
@@ -410,14 +409,14 @@ class BotRepository(BotAbstractRepository):
             assigned_model=bot_row[13],
             trades=[
                 Trade(
-                    id=r[0],
-                    amount=r[1],
-                    start_price=r[2],
-                    started_at=r[3],
-                    trade_type=r[4],
-                    ended_at=r[5],
-                    end_price=r[6],
-                    is_profit=r[7],
+                     id=r[0],
+                    amount=r[2],
+                    start_price=r[3],
+                    started_at=r[4],
+                    trade_type=r[5],
+                    ended_at=r[6],
+                    end_price=r[7],
+                    is_profit=r[8],
                 )
                 for r in trades
                 if r[1] == bot_row[0]
