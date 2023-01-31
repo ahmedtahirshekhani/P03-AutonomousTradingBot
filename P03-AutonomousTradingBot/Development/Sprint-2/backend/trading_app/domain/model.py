@@ -254,3 +254,5 @@ class Bot:
                     started_at=datetime.fromtimestamp(timestamp),
                 )
                 self.trades.append(trade)
+
+        

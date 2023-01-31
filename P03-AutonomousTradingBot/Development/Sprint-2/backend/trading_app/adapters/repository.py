@@ -349,6 +349,37 @@ class BotRepository(BotAbstractRepository):
         )
 
     def save(self, bot: Bot):
+        trades = bot.trades
+        sqlToFetch = """
+            select id, stock_id, amount, buying_price, selling_price, spread, started_at, ended_at, company_name
+            from trades
+            where bot_id = %s
+        """
+        self.cursor.execute(sqlToFetch, [bot.id])
+        trades_rows = self.cursor.fetchall()
+        for trade in trades:
+            sql = """
+            INSERT INTO trades (id, stock_id, amount, buying_price, selling_price, spread, started_at, ended_at, company_name, bot_id)
+            VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (id) DO UPDATE
+            """
+            self.cursor.execute(
+                sql,
+                [
+                    trade.id,
+                    trade.stock_id,
+                    trade.amount,
+                    trade.start_price,
+                    trade.started_at,
+                    trade.trade_type,
+                    trade.ended_at,
+                    trade.end_price,
+                    trade.is_profit,
+                    bot.id,
+                ],
+            )
+        
+
         sql = """
             update bots
             set analyst_id=%s, investor_id=%s, stocks_ticker=%s, initial_balance=%s, current_balance=%s, target_return=%s, risk_appetite=%s, in_trade=%s, state=%s, prices=%s, start_time=%s, end_time=%s, assigned_model=%s
