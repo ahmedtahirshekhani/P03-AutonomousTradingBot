@@ -180,7 +180,7 @@ class InvestorRepository(InvestorAbstractRepository):
                 email=row[3],
                 phone_number=row[4],
                 hashed_password=row[5],
-                ntn_number=row[6]
+                ntn_number=row[6],
             )
 
     def get_all(self) -> List[Investor]:
@@ -201,7 +201,7 @@ class InvestorRepository(InvestorAbstractRepository):
                     email=row[3],
                     phone_number=row[4],
                     hashed_password=row[5],
-                    ntn_number=row[6]
+                    ntn_number=row[6],
                 )
                 for row in rows
             ]
@@ -298,6 +298,26 @@ class BotRepository(BotAbstractRepository):
             ],
         )
 
+        for t in bot.trades:
+            sql = """
+                insert into trades (id, amount, start_price, started_at, trade_type, ended_at, end_price, is_profit, bot_id)
+                values (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            self.cursor.execute(
+                sql,
+                [
+                    t.id,
+                    t.amount,
+                    t.start_price,
+                    t.started_at,
+                    t.trade_type,
+                    t.ended_at,
+                    t.end_price,
+                    t.is_profit,
+                    bot.id,
+                ],
+            )
+
     def get(self, bot_id: str) -> Bot:
         bot_sql = """
             select id, analyst_id, investor_id, stocks_ticker, initial_balance, current_balance, target_return, risk_appetite, in_trade, state, prices, start_time, end_time, assigned_model
@@ -310,7 +330,7 @@ class BotRepository(BotAbstractRepository):
             raise Exception("Bot does not exist!")
 
         trades_sql = """
-            select id, stock_id, amount, buying_price, selling_price, spread, started_at, ended_at, company_name
+            select id, amount, start_price, started_at, trade_type, ended_at, end_price, is_profit
             from trades
             where bot_id = %s
         """
@@ -321,71 +341,38 @@ class BotRepository(BotAbstractRepository):
             id=bot_row[0],
             analyst_id=bot_row[1],
             investor_id=bot_row[2],
-            stocks_ticker = bot_row[3],
-            initial_balance = bot_row[4],
-            current_balance = bot_row[5],
+            stocks_ticker=bot_row[3],
+            initial_balance=bot_row[4],
+            current_balance=bot_row[5],
             target_return=bot_row[6],
             risk_appetite=bot_row[7],
             in_trade=bot_row[8],
             state=bot_row[9],
-            prices = bot_row[10],
+            prices=bot_row[10],
             start_time=bot_row[11],
             end_time=bot_row[12],
             assigned_model=bot_row[13],
             trades=[
                 Trade(
                     id=r[0],
-                    amount=r[2],
-                    start_price=r[3],
-                    started_at=r[4],
-                    trade_type=r[5],
-                    ended_at=r[6],
-                    end_price=r[7],
-                    is_profit=r[8],
+                    amount=r[1],
+                    start_price=r[2],
+                    started_at=r[3],
+                    trade_type=r[4],
+                    ended_at=r[5],
+                    end_price=r[6],
+                    is_profit=r[7],
                 )
                 for r in trades_rows
-                if r[1] == bot_row[1]
-            ]
+            ],
         )
 
     def save(self, bot: Bot):
-        trades = bot.trades
-        sqlToFetch = """
-            select id, stock_id, amount, buying_price, selling_price, spread, started_at, ended_at, company_name
-            from trades
-            where bot_id = %s
-        """
-        self.cursor.execute(sqlToFetch, [bot.id])
-        trades_rows = self.cursor.fetchall()
-        for trade in trades:
-            sql = """
-            INSERT INTO trades (id, stock_id, amount, buying_price, selling_price, spread, started_at, ended_at, company_name, bot_id)
-            VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT (id) DO UPDATE
-            """
-            self.cursor.execute(
-                sql,
-                [
-                    trade.id,
-                    trade.stock_id,
-                    trade.amount,
-                    trade.start_price,
-                    trade.started_at,
-                    trade.trade_type,
-                    trade.ended_at,
-                    trade.end_price,
-                    trade.is_profit,
-                    bot.id,
-                ],
-            )
-        
-
         sql = """
             update bots
             set analyst_id=%s, investor_id=%s, stocks_ticker=%s, initial_balance=%s, current_balance=%s, target_return=%s, risk_appetite=%s, in_trade=%s, state=%s, prices=%s, start_time=%s, end_time=%s, assigned_model=%s
             where id=%s
         """
-        finalState = bot.state.name
         self.cursor.execute(
             sql,
             [
@@ -397,15 +384,36 @@ class BotRepository(BotAbstractRepository):
                 bot.target_return,
                 bot.risk_appetite.name,
                 bot.in_trade,
-                finalState,
+                bot.state.name,
                 bot.prices,
                 bot.start_time,
                 bot.end_time,
                 bot.assigned_model,
                 bot.id,
             ],
-
         )
+
+        for trade in bot.trades:
+            sql = """
+                insert into trades (id, amount, start_price, started_at, trade_type, ended_at, end_price, is_profit, bot_id)
+                values (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                on conflict (id) do update 
+                set id=excluded.id, amount=excluded.amount, start_price=excluded.start_price, started_at=excluded.started_at, trade_type=excluded.trade_type, ended_at=excluded.ended_at, end_price=excluded.end_price, is_profit=excluded.is_profit, bot_id=excluded.bot_id
+            """
+            self.cursor.execute(
+                sql,
+                [
+                    trade.id,
+                    trade.amount,
+                    trade.start_price,
+                    trade.started_at,
+                    trade.trade_type.name,
+                    trade.ended_at,
+                    trade.end_price,
+                    trade.is_profit,
+                    bot.id,
+                ],
+            )
 
     def get_all_running_bots(self) -> List[Bot]:
         bot_sql = """
@@ -421,45 +429,44 @@ class BotRepository(BotAbstractRepository):
         ids = [bot_row[0] for bot_row in bot_rows]
 
         trades_sql = """
-            select id,bot_id, stock_id, amount, buying_price, selling_price, spread, started_at, ended_at, company_name
+            select id, amount, start_price, started_at, trade_type, ended_at, end_price, is_profit
             from trades
             where bot_id in %s;
         """
         self.cursor.execute(trades_sql, [tuple(ids)])
-        trades = self.cursor.fetchall()
+        trade_rows = self.cursor.fetchall()
 
         ret = []
 
         for bot_row in bot_rows:
             new_bot = Bot(
                 id=bot_row[0],
-            analyst_id=bot_row[1],
-            investor_id=bot_row[2],
-            stocks_ticker = bot_row[3],
-            initial_balance = bot_row[4],
-            current_balance = bot_row[5],
-            target_return=bot_row[6],
-            risk_appetite=bot_row[7],
-            in_trade=bot_row[8],
-            state=bot_row[9],
-            prices = bot_row[10],
-            start_time=bot_row[11],
-            end_time=bot_row[12],
-            assigned_model=bot_row[13],
-            trades=[
-                Trade(
-                     id=r[0],
-                    amount=r[2],
-                    start_price=r[3],
-                    started_at=r[4],
-                    trade_type=r[5],
-                    ended_at=r[6],
-                    end_price=r[7],
-                    is_profit=r[8],
-                )
-                for r in trades
-                if r[1] == bot_row[1]
-            ]
+                analyst_id=bot_row[1],
+                investor_id=bot_row[2],
+                stocks_ticker=bot_row[3],
+                initial_balance=bot_row[4],
+                current_balance=bot_row[5],
+                target_return=bot_row[6],
+                risk_appetite=bot_row[7],
+                in_trade=bot_row[8],
+                state=bot_row[9],
+                prices=bot_row[10],
+                start_time=bot_row[11],
+                end_time=bot_row[12],
+                assigned_model=bot_row[13],
+                trades=[
+                    Trade(
+                        id=r[0],
+                        amount=r[1],
+                        start_price=r[2],
+                        started_at=r[3],
+                        trade_type=r[4],
+                        ended_at=r[5],
+                        end_price=r[6],
+                        is_profit=r[7],
+                    )
+                    for r in trade_rows
+                ],
             )
             ret.append(new_bot)
 
