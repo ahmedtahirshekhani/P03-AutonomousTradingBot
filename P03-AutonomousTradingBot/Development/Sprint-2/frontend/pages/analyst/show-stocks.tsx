@@ -25,7 +25,7 @@ const ShowStocks: NextPage = () => {
     
   // );
 
-  
+
   const returnStockList = (stocks : any) =>{
       let temp: any[] = []
       let data = stocks['data']
@@ -45,7 +45,9 @@ const ShowStocks: NextPage = () => {
 
   return (
     <div>
+      <div className="flex flex-row flex-wrap">
       {returnStockList(stockdata)}      
+    </div>
     </div>
   );
 };
