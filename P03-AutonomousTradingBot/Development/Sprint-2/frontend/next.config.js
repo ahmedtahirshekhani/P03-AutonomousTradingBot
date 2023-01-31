@@ -13,3 +13,10 @@ module.exports = () => {
 		rewrites,
 	};
 };
+
+module.exports = {
+	images: {
+		dangerouslyAllowSVG: true,
+		domains: ['api.polygon.io'],
+	},
+};
