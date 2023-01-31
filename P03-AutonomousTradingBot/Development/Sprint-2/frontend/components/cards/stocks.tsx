@@ -13,7 +13,7 @@ const Stocks = ({items} : Dictionary ) => {
       <div>{items.results.cik}</div> */}
 
       <div className="card w-96 bg-base-100 shadow-xl">
-  <figure><img src="/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg" alt="Shoes" /></figure>
+  <figure><img src={items.results.logo_url} alt="Sorry, we're working on it!" /></figure>
       <div className="card-body">
     <h2 className="card-title">
       {items.results.name}
