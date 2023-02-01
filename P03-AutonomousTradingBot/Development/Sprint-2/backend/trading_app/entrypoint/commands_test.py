@@ -82,3 +82,55 @@ def test_register_investor():
     assert fetched_investor.hashed_password == hash_password(
         investor_seed.plain_text_password
     )
+
+def test_investor_login():
+    with unit_of_work.FakeUnitOfWork() as uow:
+        seed_analyst(uow)
+        investor_seed = seed_investor(uow)
+
+
+        investor_login(
+            investor_email="test@investor.com",
+            password=investor_seed.plain_text_password,
+            uow=uow,
+        )
+
+        # Wrong email
+        with pytest.raises(Exception) as e_info:
+            investor_login(
+                investor_email="123@test.com",
+                password=investor_seed.plain_text_password,
+                uow=uow,
+            )
+
+        # Wrong password
+        with pytest.raises(Exception) as e_info:
+            investor_login(
+                investor_email="test@investor.com",
+                password="123456789",
+                uow=uow,
+            )
+        
+def test_investor_logout():
+    # testing if logout works
+    with unit_of_work.FakeUnitOfWork() as uow:
+        seed_analyst(uow)
+        investor_seed = seed_investor(uow)
+
+        investor_login(
+            investor_email="test@investor.com",
+            password=investor_seed.plain_text_password,
+            uow=uow,
+        )
+
+        investor_logout(
+            investor_email="test@investor.com",
+            uow=uow,
+        )
+
+        # Wrong email
+        with pytest.raises(Exception) as e_info:
+            investor_logout(
+                investor_email="test@investor1.com",
+                uow=uow,
+            )
