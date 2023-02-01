@@ -180,7 +180,7 @@ def get_bots():
     analyst = queries.get_analyst(analyst_email, uow=unit_of_work.UnitOfWork())
     analyst_id = analyst.id
     investor_id = request.json["investor_id"]
-    bots = queries.view_all_bots(analyst_id, investor_id, uow=unit_of_work.UnitOfWork())
+    bots = queries.investor_bots(analyst_id, investor_id, uow=unit_of_work.UnitOfWork())
 
     retObj = {"success": True, "bots": bots, "message": "Bots fetched successfully!"}
     return jsonify(retObj), 200

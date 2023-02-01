@@ -172,5 +172,3 @@ def handle_execution(uow: AbstractUnitOfWork):
                 timestamp=stock_prices[bot.stocks_ticker][1],
             )
             uow.bots.save(bot)
-
-        return fetch_all_running_bots

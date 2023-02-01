@@ -11,19 +11,21 @@ import os
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
+
 def get_analyst(analyst_email: str, uow: UnitOfWork) -> Analyst:
     with uow:
         fetched_analyst = uow.analysts.get(analyst_email=analyst_email)
         return fetched_analyst
 
 
-def view_all_bots(analyst_id: str, investor_id: str, uow: UnitOfWork):
-    print("inside view all bots query")
+def investor_bots(analyst_id: str, investor_id: str, uow: UnitOfWork):
     sql = """ 
-        select * from bots where analyst_id = %s and investor_id = %s
+        select id, analyst_id, investor_id, stocks_ticker, initial_balance, current_balance, target_return, risk_appetite, in_trade, state, prices, start_time, end_time, assigned_model
+        from bots
+        where investor_id = %s
     """
     with uow:
-        uow.cursor.execute(sql, [analyst_id, investor_id])
+        uow.cursor.execute(sql, [investor_id])
         bots = uow.cursor.fetchall()
         retArr = []
         for bot in bots:
@@ -32,11 +34,17 @@ def view_all_bots(analyst_id: str, investor_id: str, uow: UnitOfWork):
                     id=bot[0],
                     analyst_id=bot[1],
                     investor_id=bot[2],
-                    state=bot[3],
-                    assigned_model=bot[4],
-                    risk_appetite=bot[5],
+                    stocks_ticker=bot[3],
+                    initial_balance=bot[4],
+                    current_balance=bot[5],
                     target_return=bot[6],
-                    duration=bot[7],
+                    risk_appetite=bot[7],
+                    in_trade=bot[8],
+                    state=bot[9],
+                    prices=bot[10],
+                    start_time=bot[11],
+                    end_time=bot[12],
+                    assigned_model=bot[13],
                 )
             )
         return retArr
@@ -51,7 +59,8 @@ def get_all_investors(uow: UnitOfWork):
 """
 Polygon APIs
 """
-api_key = os.environ.get('POLYGON_API_KEY')
+api_key = os.environ.get("POLYGON_API_KEY")
+
 
 def get_stock_details(stocks):
     stockDetails = {}
@@ -64,11 +73,13 @@ def get_stock_details(stocks):
         stockDetails[stock] = response.json()
     return stockDetails
 
+
 def get_last_close_price(stock_ticker: str, timestamp: int):
     polygon_api = f"https://api.polygon.io/v2/aggs/ticker/{stock_ticker}/range/1/hour/{timestamp}/{timestamp}?adjusted=true&sort=asc&apiKey={api_key}"
     response = requests.get(polygon_api)
     res = response.json()
     return res.results[-1].c, res.results[-1].t
+
 
 def get_train_data(stock_ticker: str):
     now = datetime.today().date()
@@ -76,7 +87,8 @@ def get_train_data(stock_ticker: str):
     polygon_api = f"https://api.polygon.io/v2/aggs/ticker/{stock_ticker}/range/1/hour/{three_month_earlier}/{now}?adjusted=true&sort=asc&limit=50000&apiKey={api_key}"
     response = requests.get(polygon_api)
     res = response.json()
-    return res['results']
+    return res["results"]
+
 
 """
 ML Module APIs

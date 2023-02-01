@@ -23,6 +23,7 @@ def seed_investor(uow):
         analyst_email="test@analyst.com",
         email="test@investor.com",
         phone_number="+92 444 4565684",
+        ntn_number="240129412049",
         uow=uow,
     )
 
