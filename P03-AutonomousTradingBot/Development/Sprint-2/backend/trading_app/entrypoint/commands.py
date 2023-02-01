@@ -4,6 +4,7 @@ from ..domain.model import (
     Bot,
     RiskAppetite,
     RegisterInvestorReturn,
+    BotState
 )
 from .queries import (get_last_close_price)
 from hashlib import sha256
@@ -41,7 +42,7 @@ def create_analyst(
             hashed_password=hashed_pass,
         )
         uow.analysts.add(new_analyst)
-
+        return new_analyst
 
 def analyst_login(analyst_email: str, password: str, uow: AbstractUnitOfWork) -> None:
     with uow:
@@ -128,7 +129,7 @@ def add_bot(
     with uow:
         uow.bots.add(new_bot)
 
-
+    return new_bot
 def initiate_bot_execution(
     bot_id: str,
     uow: AbstractUnitOfWork,
