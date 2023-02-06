@@ -50,6 +50,13 @@ def investor_bots(analyst_id: str, investor_id: str, uow: UnitOfWork):
         return retArr
 
 
+def get_bot(bot_id: str, uow: UnitOfWork) -> Bot:
+    with uow:
+        fetched_bot = uow.bots.get(bot_id=bot_id)
+
+        return fetched_bot
+
+
 def get_all_investors(uow: UnitOfWork):
     with uow:
         investors = uow.investors.get_all()

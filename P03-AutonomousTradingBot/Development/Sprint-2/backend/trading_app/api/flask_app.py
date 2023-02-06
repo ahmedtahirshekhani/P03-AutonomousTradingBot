@@ -255,14 +255,16 @@ def get_all_investors():
 @app.route(prefix + "/stock/engro", methods=["GET"])
 def get_stock_details():
     try:
-        Open,High,Low,Close,ATR = queries.predict('../../../ML/Engro.h5','../../../ML/ENGRO.csv')
+        Open, High, Low, Close, ATR = queries.predict(
+            "../../../ML/Engro.h5", "../../../ML/ENGRO.csv"
+        )
         retObj = {}
-        
-        retObj['Open'] = float(Open)
-        retObj['High'] = float(High)
-        retObj['Low'] = float(Low)
-        retObj['Close'] = float(Close)
-        retObj['ATR'] = float(ATR)
+
+        retObj["Open"] = float(Open)
+        retObj["High"] = float(High)
+        retObj["Low"] = float(Low)
+        retObj["Close"] = float(Close)
+        retObj["ATR"] = float(ATR)
         ret = successMessage("Stock details fetched successfully!", retObj)
         status = 200
     except Exception as e:
@@ -271,11 +273,12 @@ def get_stock_details():
 
     return ret, status
 
+
 # get all stock details using ticker
 @app.route(prefix + "/stocks", methods=["GET"])
 def get_all_stock_details():
     try:
-        with open('../datafiles/stocktickers.txt', 'r') as f:
+        with open("../datafiles/stocktickers.txt", "r") as f:
             stocks = f.readlines()
         stocks = [x.strip() for x in stocks]
         stockDetails = queries.get_stock_details(stocks)
@@ -288,3 +291,17 @@ def get_all_stock_details():
     return ret, status
 
 
+@app.route(prefix + "/get-bot", methods=["GET"])
+@jwt_required()
+def get_bot():
+
+    if request.json is None:
+        msg = "payload missing in request"
+        return jsonify({"success": False, "message": msg}), 400
+
+    fetched_bot = queries.get_bot(
+        request.json["bot_id"],
+        uow=unit_of_work.UnitOfWork(),
+    )
+
+    return successMessage(message="Bot successfully fetched!", data=fetched_bot), 200
