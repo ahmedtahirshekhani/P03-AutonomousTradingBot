@@ -86,7 +86,7 @@ class Analyst:
         self, name: str, address: str, phone_number: str, email: str, ntn_number: str
     ) -> RegisterInvestorReturn:
         password = str(uuid4())[:INVESTOR_PASS_LEN]  # Autogenerate password
-
+    
         return RegisterInvestorReturn(
             investor=Investor(
                 id=str(uuid4()),
@@ -149,6 +149,13 @@ class Trade:
     # buying_price: float
     # selling_price: float
     # spread: float
+
+    def add_trade(self, trade_type: TradeType, amount: float, price: float):
+        self.trade_type = trade_type
+        self.amount = amount
+        self.start_price = price
+        self.started_at = datetime.now()
+        
 
 
 @dataclass

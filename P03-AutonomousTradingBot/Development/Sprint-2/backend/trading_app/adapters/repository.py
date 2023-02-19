@@ -146,7 +146,7 @@ class InvestorRepository(InvestorAbstractRepository):
     def add(self, investor: Investor):
         sql = """
             insert into investors (id, name, address, email, phone_number, hashed_password, ntn_number)
-            values (%s, %s, %s, %s, %s, %s)
+            values (%s, %s, %s, %s, %s, %s, %s)
         """
         self.cursor.execute(
             sql,

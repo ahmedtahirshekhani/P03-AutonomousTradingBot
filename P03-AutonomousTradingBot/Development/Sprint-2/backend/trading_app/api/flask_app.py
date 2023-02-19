@@ -52,6 +52,7 @@ def register_investor():
         return jsonify({"success": False, "message": msg}), 400
 
     try:
+        
         ret = commands.register_investor(
             request.json["name"],
             request.json["address"],
@@ -154,6 +155,7 @@ def add_bot():
     analyst_email = get_jwt_identity()
     analyst = queries.get_analyst(analyst_email, uow=unit_of_work.UnitOfWork())
     analyst_id = analyst.id
+
 
     commands.add_bot(
         analyst_id,

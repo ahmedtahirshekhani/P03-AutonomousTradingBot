@@ -83,6 +83,7 @@ def register_investor(
             phone_number=phone_number,
             ntn_number=ntn_number,
         )
+        print("Investor added to analyst", ret.investor.id)
         uow.investors.add(ret.investor)
         return ret
 
@@ -115,6 +116,7 @@ def add_bot(
     target_return: float,
     uow: AbstractUnitOfWork,
 ):
+    print("Adding bot")
 
     new_bot = Bot(
         id=str(uuid4()),
@@ -129,7 +131,9 @@ def add_bot(
     with uow:
         uow.bots.add(new_bot)
 
-    return new_bot
+    # new_bot = Bot()
+
+    # return new_bot
 def initiate_bot_execution(
     bot_id: str,
     uow: AbstractUnitOfWork,
@@ -173,3 +177,16 @@ def handle_execution(uow: AbstractUnitOfWork):
                 timestamp=stock_prices[bot.stocks_ticker][1],
             )
             uow.bots.save(bot)
+
+
+def add_trade(
+    bot_id: str,
+    price: float,
+    quantity: int,
+    timestamp: int,
+    uow: AbstractUnitOfWork,
+):
+    with uow:
+        fetched_bot = uow.bots.get(bot_id)
+        fetched_bot.add_trade(price=price, quantity=quantity, timestamp=timestamp)
+        uow.bots.save(fetched_bot)
