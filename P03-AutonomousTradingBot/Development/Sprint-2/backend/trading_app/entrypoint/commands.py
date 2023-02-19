@@ -112,12 +112,14 @@ def add_bot(
     investor_id: str,
     stocks_ticker: str,
     balance: float,
-    risk_appetite: RiskAppetite,
+    risk_appetite: str,
     target_return: float,
     uow: AbstractUnitOfWork,
 ):
-    print("Adding bot")
 
+    risk_appetite = RiskAppetite[risk_appetite]
+
+    
     new_bot = Bot(
         id=str(uuid4()),
         analyst_id=analyst_id,
@@ -131,15 +133,14 @@ def add_bot(
     with uow:
         uow.bots.add(new_bot)
 
-    # new_bot = Bot()
-
-    # return new_bot
+    return new_bot
 def initiate_bot_execution(
     bot_id: str,
     uow: AbstractUnitOfWork,
 ):
     with uow:
         fetched_bot = uow.bots.get(bot_id)
+        fetched_bot.risk_appetite = RiskAppetite[fetched_bot.risk_appetite]
         fetched_bot.initiate_execution()
         uow.bots.save(fetched_bot)
 
@@ -150,6 +151,7 @@ def terminate_bot(
 ):
     with uow:
         fetched_bot = uow.bots.get(bot_id)
+        fetched_bot.risk_appetite = RiskAppetite[fetched_bot.risk_appetite]
         fetched_bot.terminate()
         uow.bots.save(fetched_bot)
 

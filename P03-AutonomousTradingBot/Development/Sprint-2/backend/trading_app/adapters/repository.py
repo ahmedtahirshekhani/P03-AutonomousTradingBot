@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import json
 from typing import List, Dict, Set
 from uuid import UUID
 
@@ -273,11 +274,13 @@ class BotRepository(BotAbstractRepository):
 
     # TODO: add new trades here and on save also
     def add(self, bot: Bot):
+  
         sql = """
             insert into bots (id, analyst_id, investor_id, stocks_ticker, initial_balance, current_balance, target_return, risk_appetite, in_trade, state, prices, start_time, end_time, assigned_model)
             values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
-
+        
+        prices = json.dumps(bot.prices)
         self.cursor.execute(
             sql,
             [
@@ -291,10 +294,10 @@ class BotRepository(BotAbstractRepository):
                 bot.risk_appetite.name,
                 bot.in_trade,
                 bot.state.name,
-                bot.prices,
+                prices,
                 bot.start_time,
                 bot.end_time,
-                bot.assigned_model,
+                bot.assigned_model       
             ],
         )
 
@@ -373,6 +376,8 @@ class BotRepository(BotAbstractRepository):
             set analyst_id=%s, investor_id=%s, stocks_ticker=%s, initial_balance=%s, current_balance=%s, target_return=%s, risk_appetite=%s, in_trade=%s, state=%s, prices=%s, start_time=%s, end_time=%s, assigned_model=%s
             where id=%s
         """
+
+        prices = json.dumps(bot.prices)
         self.cursor.execute(
             sql,
             [
@@ -385,36 +390,32 @@ class BotRepository(BotAbstractRepository):
                 bot.risk_appetite.name,
                 bot.in_trade,
                 bot.state.name,
-                bot.prices,
+                prices,
                 bot.start_time,
                 bot.end_time,
                 bot.assigned_model,
                 bot.id,
             ],
         )
-
-        for trade in bot.trades:
+        for t in bot.trades:
             sql = """
                 insert into trades (id, amount, start_price, started_at, trade_type, ended_at, end_price, is_profit, bot_id)
                 values (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-                on conflict (id) do update 
-                set id=excluded.id, amount=excluded.amount, start_price=excluded.start_price, started_at=excluded.started_at, trade_type=excluded.trade_type, ended_at=excluded.ended_at, end_price=excluded.end_price, is_profit=excluded.is_profit, bot_id=excluded.bot_id
             """
             self.cursor.execute(
                 sql,
                 [
-                    trade.id,
-                    trade.amount,
-                    trade.start_price,
-                    trade.started_at,
-                    trade.trade_type.name,
-                    trade.ended_at,
-                    trade.end_price,
-                    trade.is_profit,
+                    t.id,
+                    t.amount,
+                    t.start_price,
+                    t.started_at,
+                    t.trade_type,
+                    t.ended_at,
+                    t.end_price,
+                    t.is_profit,
                     bot.id,
                 ],
             )
-
     def get_all_running_bots(self) -> List[Bot]:
         bot_sql = """
             select id, analyst_id, investor_id, stocks_ticker, initial_balance, current_balance, target_return, risk_appetite, in_trade, state, prices, start_time, end_time, assigned_model
