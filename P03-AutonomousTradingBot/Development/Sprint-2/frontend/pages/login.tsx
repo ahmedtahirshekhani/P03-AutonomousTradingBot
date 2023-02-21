@@ -1,6 +1,7 @@
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import ErrorMessageAlert from '../components/cards/ErrorMessageAlert';
 import { login } from '../services/auth';
 
 const Login: NextPage = () => {
@@ -8,14 +9,17 @@ const Login: NextPage = () => {
 
 	const [email, setEmail] = useState<String>('');
 	const [password, setPassword] = useState<String>('');
+	const [showErrorMessage, setShowErrorMessage] = useState('');
 
 	const handleLogin = () => {
+		setShowErrorMessage('');
+
 		login(email, password)
 			.then(res => {
 				router.push(`/${res.data.role}`);
 			})
 			.catch(e => {
-				console.log(e.message);
+				setShowErrorMessage(e.response.data.message);
 			});
 	};
 
@@ -60,6 +64,11 @@ const Login: NextPage = () => {
 								Login
 							</button>
 						</div>
+
+						{/* Error prompt */}
+						<ErrorMessageAlert
+							showErrorMessage={showErrorMessage}
+						/>
 					</div>
 				</div>
 			</div>
