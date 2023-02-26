@@ -22,7 +22,7 @@ const Home: NextPage = () => {
                   <Link href="/primary/login/analyst">Analyst</Link>
                 </li>
                 <li>
-                  <Link href="/primary/login/investor">Investor</Link>
+                  <Link href="/primary/graph">Investor</Link>
                 </li>
               </ul>
             </div>

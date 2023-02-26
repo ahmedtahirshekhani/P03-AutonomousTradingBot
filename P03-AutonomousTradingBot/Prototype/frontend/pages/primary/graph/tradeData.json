@@ -1,0 +1,38 @@
+[
+  {
+    "id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+    "bot_id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12",
+    "amount": 500.00,
+    "start_price": 100.00,
+    "started_at": "2022-01-01 12:00:00+00:00",
+    "trade_type": "put",
+    "ended_at": "2022-01-01 13:00:00+00:00",
+    "end_price": 80.00,
+    "is_profit": true,
+    "stock_name": "AAPL"
+  },
+  {
+    "id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13",
+    "bot_id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14",
+    "amount": 1000.00,
+    "start_price": 50.00,
+    "started_at": "2022-02-01 10:00:00+00:00",
+    "trade_type": "call",
+    "ended_at": "2022-02-01 11:00:00+00:00",
+    "end_price": 70.00,
+    "is_profit": true,
+    "stock_name": "MSFT"
+  },
+  {
+    "id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15",
+    "bot_id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a16",
+    "amount": 750.00,
+    "start_price": 120.00,
+    "started_at": "2022-03-01 14:00:00+00:00",
+    "trade_type": "put",
+    "ended_at": "2022-03-01 15:00:00+00:00",
+    "end_price": 100.00,
+    "is_profit": false,
+    "stock_name": "TSLA"
+  }
+]
