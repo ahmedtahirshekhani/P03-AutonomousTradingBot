@@ -26,7 +26,7 @@ const Home: NextPage = () => {
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="/primary/login/investor">
+                                        <Link href="/primary/graph">
                                             <a>Investor</a>
                                         </Link>
                                     </li>
