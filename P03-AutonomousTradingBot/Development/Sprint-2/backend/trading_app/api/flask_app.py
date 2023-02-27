@@ -265,20 +265,31 @@ def get_all_investors():
     return jsonify(retObj), 200
 
 
-@app.route(prefix + "/stock/engro", methods=["GET"])
+# get request with ticker
+@app.route(prefix + "/predictions", methods=["GET"])
 def get_stock_details():
     try:
-        Open, High, Low, Close, ATR = queries.predict(
-            "../../../ML/Engro.h5", "../../../ML/ENGRO.csv"
-        )
-        retObj = {}
-
-        retObj["Open"] = float(Open)
-        retObj["High"] = float(High)
-        retObj["Low"] = float(Low)
-        retObj["Close"] = float(Close)
-        retObj["ATR"] = float(ATR)
-        ret = successMessage("Stock details fetched successfully!", retObj)
+        tickers = [
+            "ENGRO", "SILK","SYS", "HBL"
+        ]
+        predictions = []
+        for ticker in tickers:
+            Open, High, Low, Close, ATR = queries.predict(
+                f"../../../ML/{ticker}.h5", ticker
+            )
+            predictions.append(
+                {
+                    "ticker": ticker,
+                    "Open": float(Open),
+                    "High": float(High),
+                    "Low": float(Low),
+                    "Close": float(Close),
+                    "ATR": float(ATR),
+                }
+            )
+        
+        
+        ret = successMessage("Stock details fetched successfully!", predictions)
         status = 200
     except Exception as e:
         ret = errorMessage(str(e))

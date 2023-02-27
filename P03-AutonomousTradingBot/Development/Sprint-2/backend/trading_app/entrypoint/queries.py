@@ -1,16 +1,12 @@
 from .unit_of_work import UnitOfWork
 from ..domain.model import Bot, Analyst
 
-import numpy as np
-import pandas as pd
-import keras
-from sklearn.preprocessing import MinMaxScaler
 
 import requests
 import os
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-
+from .mlmodelclass import TrainModel
 
 def get_analyst(analyst_email: str, uow: UnitOfWork) -> Analyst:
     with uow:
@@ -102,34 +98,22 @@ ML Module APIs
 """
 
 
-def atr_col(df):
-    high_low = df["High"] - df["Low"]
-    high_prev_close = np.abs(df["High"] - df["Close"].shift())
-    low_prev_close = np.abs(df["Low"] - df["Close"].shift())
-    atr_df = pd.concat([high_low, high_prev_close, low_prev_close], axis=1)
-    true_range = np.max(atr_df, axis=1)
-    atr = true_range.rolling(14).mean()
-    atr_df = atr.to_frame(name="ATR")
-    ndf = pd.concat([df, atr_df], axis=1)
-    ndf = ndf.dropna()
-    return ndf
+# def atr_col(df):
+#     high_low = df["High"] - df["Low"]
+#     high_prev_close = np.abs(df["High"] - df["Close"].shift())
+#     low_prev_close = np.abs(df["Low"] - df["Close"].shift())
+#     atr_df = pd.concat([high_low, high_prev_close, low_prev_close], axis=1)
+#     true_range = np.max(atr_df, axis=1)
+#     atr = true_range.rolling(14).mean()
+#     atr_df = atr.to_frame(name="ATR")
+#     ndf = pd.concat([df, atr_df], axis=1)
+#     ndf = ndf.dropna()
+#     return ndf
 
 
-def predict(model, csv):
-    pred_model = keras.models.load_model(model)
-    sc = MinMaxScaler(feature_range=(0, 1))
-    df = pd.read_csv(csv)
-    ndf = atr_col(df)
-    pred_X = ndf.iloc[-60:, 2:].values
-    pred_scaled = sc.fit_transform(pred_X)
-    pred_scaled = pred_scaled.reshape(1, 60, 6)
-    predicted_stock_price = pred_model.predict(pred_scaled)
-    predicted_stock_price = sc.inverse_transform(predicted_stock_price)
+def predict(model, ticker):
+    
+    train_model = TrainModel(ticker)
+    return train_model.predict(model)
 
-    Open = predicted_stock_price[:, 0][0]
-    High = predicted_stock_price[:, 1][0]
-    Low = predicted_stock_price[:, 2][0]
-    Close = predicted_stock_price[:, 3][0]
-    # Volume=predicted_stock_price[:,4][0]
-    ATR = predicted_stock_price[:, 5][0]
-    return Open, High, Low, Close, ATR
+
