@@ -12,9 +12,48 @@ const RegisterInvestor: NextPage = () => {
 	const [email, setEmail] = useState('');
 	const [phone, setPhone] = useState('');
 	const [address, setAddress] = useState('');
+	const [errors, setErrors] = useState<string[]>([]);
 	const router = useRouter();
+	
+
+
+	const validateInputs = () => {
+		const errors: string[] = [];
+
+		if (!NTN) {
+			errors.push('NTN is required');
+		}
+
+		if (!name) {
+			errors.push('Name is required');
+		}
+
+		if (!email) {
+			errors.push('Email is required');
+		}
+
+		if (!phone) {
+			errors.push('Phone number is required');
+		}
+
+		if (!address) {
+			errors.push('Address is required');
+		}
+
+		if (!email.includes('@') || !email.includes('.')) {
+			errors.push('Email is invalid');
+		}
+
+		if (phone.length < 11) {
+			errors.push('Phone number is too short');
+		}
+
+		setErrors(errors);
+		return errors.length === 0;
+	};
 
 	const regInvestor = () => {
+		if (validateInputs()) {
 		registerInvestor(NTN, email, name, phone, address)
 			.then(res => {
 				Swal.fire({
@@ -36,6 +75,10 @@ const RegisterInvestor: NextPage = () => {
 			.catch(err => {
 				console.log(err);
 			});
+		}
+		else {
+			console.log(errors)
+		}
 	};
 
 	return (
@@ -51,6 +94,17 @@ const RegisterInvestor: NextPage = () => {
 							<div className='midnight text-tahiti'>
 								<div className='card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100'>
 									<div className='card-body'>
+									{errors.length > 0 && (
+											<div className='alert alert-error mb-4'>
+												<ul>
+													{errors.map(error => (
+														<li key={error}>
+															{error}
+														</li>
+													))}
+												</ul>
+											</div>
+										)}
 										<div className='form-control'>
 											<label className='label'>
 												<span className='label-text'>
