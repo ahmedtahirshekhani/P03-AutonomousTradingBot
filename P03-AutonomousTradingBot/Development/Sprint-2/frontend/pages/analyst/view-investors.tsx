@@ -29,6 +29,7 @@ const ViewInvestors: NextPage = () => {
 
 						<p className='py-6'></p>
 						<div className=''>
+						{investors.length ? (
 							<table className='table w-full'>
 								<thead>
 									<tr className='text-primary'>
@@ -51,6 +52,9 @@ const ViewInvestors: NextPage = () => {
 									))}
 								</tbody>
 							</table>
+							) : (
+                <p className="text-2xl text-gray-500">No investors found.</p>
+              )}
 						</div>
 					</div>
 				</div>
