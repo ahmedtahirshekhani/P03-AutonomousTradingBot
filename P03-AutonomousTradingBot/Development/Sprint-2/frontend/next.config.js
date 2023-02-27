@@ -11,5 +11,9 @@ module.exports = () => {
   };
   return {
     rewrites,
+    images: {
+      dangerouslyAllowSVG: true,
+      domains: ["api.polygon.io"],
+    },
   };
 };

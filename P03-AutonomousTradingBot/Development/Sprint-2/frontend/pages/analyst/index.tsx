@@ -21,7 +21,16 @@ const AnalystDashboard: NextPage = () => {
 								Register Investor
 							</button>
 						</Link>
+
+						<div className='h-4'></div>
+
+						<Link href='/analyst/show-stocks'>
+							<button className='btn btn-primary'>
+								Show Stocks
+							</button>
+						</Link>
 					</div>
+					
 				</div>
 			</div>
 		</AnalystLayout>
