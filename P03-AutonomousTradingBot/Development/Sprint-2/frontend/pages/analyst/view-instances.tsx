@@ -76,26 +76,27 @@ const Home: NextPage = () => {
                       <li>Duration: {b.duration}</li>
                     </ul>
                     <div className="card-actions justify-end">
-                      <button
-                        onClick={() => handleStartClick(b.id)}
-                        className="btn btn-primary mr-2"
-                      >
-                        Start
-                      </button>
-                      <button
-                        onClick={() => handleTerminateClick(b.id)}
-                        className="btn btn-error mr-2"
-                      >
-                        Terminate
-                      </button>
-                      <Link href="/analyst/graph">
-                        <button className="btn btn-accent">
-                          View Graph
-                        </button>
-                      </Link>
+  <div className="btn-container">
+    <button
+      onClick={() => handleStartClick(b.id)}
+      className="btn btn-primary mr-2"
+    >
+      Start
+    </button>
+    <button
+      onClick={() => handleTerminateClick(b.id)}
+      className="btn btn-error mr-2"
+    >
+      Terminate
+    </button>
+    <Link href="/analyst/graph">
+      <button className="btn btn-accent">View Graph</button>
+    </Link>
+  </div>
+</div>
                     </div>
                   </div>
-                </div>
+                
               ))}
             </div>
           </div>

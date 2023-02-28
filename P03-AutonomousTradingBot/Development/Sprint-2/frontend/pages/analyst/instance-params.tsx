@@ -15,6 +15,7 @@ const Home: NextPage = () => {
 	const handleSubmit = async () => {
 		const response = await addBot(router.query.investor_id, risk, roi);
 		Swal.fire(response.message);
+		router.push('/analyst');
 	};
 
 	return (
