@@ -13,7 +13,7 @@ const Home: NextPage = () => {
 	const [roi, setRoi] = useState('');
 
 	const handleSubmit = async () => {
-		const response = await addBot(router.query.investor_id, risk, roi);
+		const response = await addBot(router.query.investor_id, risk, roi, amount);
 		Swal.fire(response.message);
 		router.push('/analyst');
 	};

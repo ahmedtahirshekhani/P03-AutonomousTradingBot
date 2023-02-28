@@ -269,8 +269,8 @@ class BotRepository(BotAbstractRepository):
 
     def add(self, bot: Bot):
         sql = """
-            insert into bots (id, analyst_id, investor_id, state, assigned_model, risk_appetite, target_return, duration)
-            values (%s, %s, %s, %s, %s, %s, %s, %s)
+            insert into bots (id, analyst_id, investor_id, state, assigned_model, risk_appetite, target_return, duration, amount)
+            values (%s, %s, %s, %s, %s, %s, %s, %s,%s)
         """
         finalState = bot.state.name
 
@@ -285,6 +285,7 @@ class BotRepository(BotAbstractRepository):
                 bot.risk_appetite,
                 bot.target_return,
                 bot.duration,
+                bot.amount,
             ],
         )
 
@@ -316,6 +317,7 @@ class BotRepository(BotAbstractRepository):
             risk_appetite=bot_row[5],
             target_return=bot_row[6],
             duration=bot_row[7],
+            amount=bot_row[8],
             trades=[
                 Trade(
                     id=r[0],
@@ -350,12 +352,13 @@ class BotRepository(BotAbstractRepository):
                 bot.target_return,
                 bot.duration,
                 bot.id,
+                bot.amount,
             ],
         )
 
     def get_all_running_bots(self) -> List[Bot]:
         bot_sql = """
-            select id, analyst_id, investor_id, state, assigned_model, risk_appetite, target_return, duration
+            select id, analyst_id, investor_id, state, assigned_model, risk_appetite, target_return, duration ,amount
             from bots
             where bots.state = 'RUNNING'
         """
@@ -386,6 +389,7 @@ class BotRepository(BotAbstractRepository):
                 risk_appetite=bot_row[5],
                 target_return=bot_row[6],
                 duration=bot_row[7],
+                amount=bot_row[8],
                 trades=[
                     Trade(
                         id=r[0],

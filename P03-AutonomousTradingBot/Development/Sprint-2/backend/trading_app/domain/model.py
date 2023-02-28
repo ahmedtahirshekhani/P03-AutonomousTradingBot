@@ -144,6 +144,7 @@ class Trade:
 class Bot:
     analyst_id: str
     investor_id: str
+    amount: int
     state: BotState = BotState.IDLE
     trades: List[Trade] = field(default_factory=list)
     assigned_model: int = 0

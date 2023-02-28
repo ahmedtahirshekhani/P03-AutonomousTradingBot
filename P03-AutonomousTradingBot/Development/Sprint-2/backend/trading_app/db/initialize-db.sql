@@ -39,7 +39,7 @@ create table bots (
     risk_appetite risk_appetite_enum,
     target_return numeric,
     duration timestamp with time zone,
-
+    amount numeric,
     primary key (id),
     foreign key (analyst_id)
         references analysts(id),

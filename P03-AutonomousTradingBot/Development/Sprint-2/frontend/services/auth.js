@@ -117,7 +117,7 @@ const getAllBots = async investor_id => {
 	return response.data;
 };
 
-const addBot = async (investor_id, risk_appetite, target_return) => {
+const addBot = async (investor_id, risk_appetite, target_return, amount) => {
 	var data = JSON.stringify({
 		investor_id: investor_id,
 		trades: [],
@@ -125,6 +125,7 @@ const addBot = async (investor_id, risk_appetite, target_return) => {
 		risk_appetite: risk_appetite,
 		target_return: target_return,
 		duration: '10-12-2023',
+		amount:amount
 	});
 
 	var config = {

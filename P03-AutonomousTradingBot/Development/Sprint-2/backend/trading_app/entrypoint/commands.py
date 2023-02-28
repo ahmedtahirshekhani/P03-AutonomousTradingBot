@@ -112,6 +112,7 @@ def add_bot(
     risk_appetite: RiskAppetite,
     target_return: float,
     duration: datetime,
+    amount:int,
     uow: AbstractUnitOfWork,
 ):
 
@@ -124,6 +125,7 @@ def add_bot(
         risk_appetite=risk_appetite,
         target_return=target_return,
         duration=duration,
+        amount=amount,
         id=str(uuid4()),
     )
     with uow:

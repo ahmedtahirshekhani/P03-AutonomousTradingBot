@@ -28,6 +28,7 @@ def view_all_bots(analyst_id: str, investor_id: str, uow: UnitOfWork):
                     risk_appetite=bot[5],
                     target_return=bot[6],
                     duration=bot[7],
+                    amount=bot[8]
                 )
             )
         return retArr

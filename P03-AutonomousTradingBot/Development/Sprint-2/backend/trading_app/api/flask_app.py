@@ -162,11 +162,13 @@ def add_bot():
     commands.add_bot(
         analyst_id,
         request.json["investor_id"],
-        request.json["trades"],
-        request.json["assigned_model"],
+        [],
+        '0',
         request.json["risk_appetite"],
         request.json["target_return"],
         request.json["duration"],
+        request.json["amount"],
+
         uow=unit_of_work.UnitOfWork(),
     )
 
