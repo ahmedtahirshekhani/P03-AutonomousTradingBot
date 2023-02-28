@@ -16,6 +16,7 @@ interface Bot {
   risk_appetite: string;
   target_return: string;
   duration: string;
+  amount: string
 }
 
 const Home: NextPage = () => {
@@ -34,6 +35,7 @@ const Home: NextPage = () => {
 
   const handleStartClick = async (bot_id: string) => {
     const response = await initiateBotExecution(bot_id);
+    console.log(response)
     Swal.fire(response.message);
     setBots((prevBots) =>
       prevBots.map((bot) =>
@@ -60,45 +62,53 @@ const Home: NextPage = () => {
             <h1 className="text-5xl font-bold">Current Instances</h1>
             <p className="py-6"></p>
 
+            {bots.length > 0 ? (
+
             <div className="grid gap-4 md:grid-cols-2">
               {bots.map((b, i) => (
                 <div
                   key={i}
-                  className="p-4 card w-96 bg-neutral text-neutral-content"
+                  className="p-4 card w-96 bg-neutral text-neutral-content border-primary"
                 >
                   <div className="card-body items-center text-center">
                     <h2 className="card-title font-bold">{b.id}</h2>
                     <p className="font-bold">Configuration Parameters</p>
                     <ul>
                       <li className="text-info">State: {b.state}</li>
+                      <li>Amount Invested: {b.amount}</li>
                       <li>Risk Appetite: {b.risk_appetite}</li>
                       <li>Target Return: {b.target_return}</li>
                       <li>Duration: {b.duration}</li>
                     </ul>
                     <div className="card-actions justify-end">
-  <div className="btn-container">
-    <button
-      onClick={() => handleStartClick(b.id)}
-      className="btn btn-primary mr-2"
-    >
-      Start
-    </button>
-    <button
-      onClick={() => handleTerminateClick(b.id)}
-      className="btn btn-error mr-2"
-    >
-      Terminate
-    </button>
-    <Link href="/analyst/graph">
-      <button className="btn btn-accent">View Graph</button>
-    </Link>
-  </div>
-</div>
+                      <div className="btn-container">
+                      <div className="flex justify-end">
+                        <button
+                          onClick={() => handleStartClick(b.id)}
+                          className="btn btn-primary mr-2"
+                        >
+                          Start
+                        </button>
+                        <button
+                          onClick={() => handleTerminateClick(b.id)}
+                          className="btn btn-error mr-2"
+                        >
+                          Terminate
+                        </button>
+                        <Link href="/analyst/graph">
+                          <button className="btn btn-accent">View Graph</button>
+                        </Link>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 
+                </div>
               ))}
             </div>
+            ) : (
+              <p>No bot instances currently found for this investor.</p>
+            )}
           </div>
         </div>
       </div>

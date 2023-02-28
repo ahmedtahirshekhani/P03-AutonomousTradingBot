@@ -136,20 +136,30 @@ def initiate_bot_execution(
     bot_id: str,
     uow: AbstractUnitOfWork,
 ):
-    with uow:
-        fetched_bot = uow.bots.get(bot_id)
-        fetched_bot.initiate_execution()
-        uow.bots.save(fetched_bot)
+    pass
+    # print(uow, "HERER UOW")
+    # with uow:
+    #     # print("HERE beforefb\n")
+    #     fetched_bot = uow.bots.get(bot_id)
+    #     # print("HERE fb\n")
+
+    #     fetched_bot.initiate_execution()
+    #     # print("HERE ie\n")
+
+    #     uow.bots.save(fetched_bot)
+    #     # print("HERE no issue")
+
 
 
 def terminate_bot(
     bot_id: str,
     uow: AbstractUnitOfWork,
 ):
-    with uow:
-        fetched_bot = uow.bots.get(bot_id)
-        fetched_bot.terminate()
-        uow.bots.save(fetched_bot)
+    pass
+    # with uow:
+    #     fetched_bot = uow.bots.get(bot_id)
+    #     fetched_bot.terminate()
+    #     uow.bots.save(fetched_bot)
 
 
 # trigger bot execution after every n minutes

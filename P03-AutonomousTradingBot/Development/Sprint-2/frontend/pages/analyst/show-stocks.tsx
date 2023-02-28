@@ -4,6 +4,7 @@ import stockdata from "../../components/cards/stockdetails.json";
 import { error } from "console";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import AnalystLayout from "../../components/layouts/AnalystLayout";
 
 interface Stockdata {
   [key: string]: any;
@@ -58,6 +59,7 @@ const ShowStocks: NextPage = () => {
 
   const returnStockList = (stocks: any) => {
     return (
+		
       <div className="flex">
         {stocks.map((stock: any, index: number) => (
           <Stocks
@@ -74,6 +76,7 @@ const ShowStocks: NextPage = () => {
   };
 
   return (
+	<AnalystLayout>
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content text-center">
         <div className="max-w-md">
@@ -82,11 +85,12 @@ const ShowStocks: NextPage = () => {
             {returnStockList(stocks)}
           </div>
 		  <Link href="/analyst">
-		  <button className="btn-primary">
+		  <button className="btn btn-wide btn-primary">
 			<h1>Back to Main Page</h1></button></Link>
         </div>
       </div>
     </div>
+	</AnalystLayout>
   );
 };
 

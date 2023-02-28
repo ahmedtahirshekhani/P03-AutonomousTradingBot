@@ -197,6 +197,7 @@ def get_bots():
 def initiate_bot_execution():
     if request.json is None:
         msg = "payload missing in request"
+
         return jsonify({"success": False, "message": msg}), 400
 
     try:
@@ -208,6 +209,7 @@ def initiate_bot_execution():
         return jsonify({"success": False, "message": str(e)}), 400
 
     retObj = {"success": True, "message": "Bot execution initiated successfully!"}
+
     return jsonify(retObj), 200
 
 
