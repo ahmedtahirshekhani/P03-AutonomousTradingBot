@@ -6,7 +6,7 @@ interface Dictionary {
 
 const Stocks = ({ items }: Dictionary) => {
 	return (
-		<div>
+		<div className="stock-container">
 			<div className='card w-96 bg-base-100 shadow-xl'>
 				<figure>
 					<Image

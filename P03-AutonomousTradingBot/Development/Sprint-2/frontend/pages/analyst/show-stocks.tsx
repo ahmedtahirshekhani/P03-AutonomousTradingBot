@@ -34,7 +34,9 @@ const ShowStocks: NextPage = () => {
 			<div className='hero-content text-center'>
 				<div className='max-w-md'>
 					<h1 className='text-5xl font-bold'>Available Stocks</h1>
+					<div className="flex flex-wrap justify-center">
 					{returnStockList(stockdata)}
+					</div>
 				</div>
 			</div>
 		</div>
