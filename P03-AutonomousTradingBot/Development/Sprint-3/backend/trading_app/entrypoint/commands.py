@@ -170,7 +170,9 @@ def handle_execution(uow: AbstractUnitOfWork):
         # Fetch the last close price from api for all the stocks
         for stock_ticker in stocks_ticker_list:
             timestamp = int(datetime.now().timestamp())
+           
             p, t = get_last_close_price(stock_ticker=stock_ticker, timestamp=timestamp)
+            print("Price", p, "Timestamp", t)
             stock_prices[stock_ticker] = p, t
 
         for bot in fetch_all_running_bots:

@@ -7,7 +7,7 @@ import os
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from .mlmodelclass import TrainModel
-
+import psx 
 def get_analyst(analyst_email: str, uow: UnitOfWork) -> Analyst:
     with uow:
         fetched_analyst = uow.analysts.get(analyst_email=analyst_email)
@@ -62,53 +62,59 @@ def get_all_investors(uow: UnitOfWork):
 """
 Polygon APIs
 """
-api_key = os.environ.get("POLYGON_API_KEY")
 
 
-def get_stock_details(stocks):
-    stockDetails = {}
-    polygon_base_api = "https://api.polygon.io/v3/reference/tickers/"
-    for stock in stocks:
-        polygon_api = (
-            polygon_base_api + stock + "?apiKey=" + os.environ.get("POLYGON_API_KEY")
-        )
-        response = requests.get(polygon_api)
-        stockDetails[stock] = response.json()
-    return stockDetails
+# def get_stock_details(stocks):
+#     stockDetails = {}
+#     polygon_base_api = "https://api.polygon.io/v3/reference/tickers/"
+#     for stock in stocks:
+#         polygon_api = (
+#             polygon_base_api + stock + "?apiKey=" + os.environ.get("POLYGON_API_KEY")
+#         )
+#         response = requests.get(polygon_api)
+#         stockDetails[stock] = response.json()
+#     return stockDetails
 
 
 def get_last_close_price(stock_ticker: str, timestamp: int):
-    polygon_api = f"https://api.polygon.io/v2/aggs/ticker/{stock_ticker}/range/1/hour/{timestamp}/{timestamp}?adjusted=true&sort=asc&apiKey={api_key}"
-    response = requests.get(polygon_api)
-    res = response.json()
-    return res.results[-1].c, res.results[-1].t
+    # check if today is a trading day
+    # if not, get the last trading day
+    # get the last close price from the last trading day
+    # return the last close price
+    day = datetime.today().weekday()
+    time = datetime.today().time()
+   
+    if day >= 0 and day <= 4:
+        timestamp = datetime.today()- relativedelta(days=1)
+    if day == 5:
+        timestamp = datetime.today() - relativedelta(days=2)
+    if day == 6:
+        timestamp = datetime.today() - relativedelta(days=3)
+    if time.hour < 9 or time.hour > 16:
+        timestamp = timestamp - relativedelta(days=1)
 
+   
+    datalen = 0
+    while datalen == 0:
+        data = psx.stocks(stock_ticker, start=timestamp, end=datetime.today())
+        datalen = len(data)
+        timestamp = timestamp - relativedelta(days=1)
 
-def get_train_data(stock_ticker: str):
-    now = datetime.today().date()
-    three_month_earlier = (datetime.today() + relativedelta(months=-3)).date()
-    polygon_api = f"https://api.polygon.io/v2/aggs/ticker/{stock_ticker}/range/1/hour/{three_month_earlier}/{now}?adjusted=true&sort=asc&limit=50000&apiKey={api_key}"
-    response = requests.get(polygon_api)
-    res = response.json()
-    return res["results"]
+    # get the last row of the data dataframe
+    dataval = data.iloc[-1]
+    print(dataval["Close"])
+    
+    return dataval["Close"], timestamp.timestamp()
+    # polygon_api = f"https://api.polygon.io/v2/aggs/ticker/{stock_ticker}/range/1/hour/{timestamp}/{timestamp}?adjusted=true&sort=asc&apiKey={api_key}"
+    # response = requests.get(polygon_api)
+    # res = response.json()
+    # return res.results[-1].c, res.results[-1].t
+
 
 
 """
 ML Module APIs
 """
-
-
-# def atr_col(df):
-#     high_low = df["High"] - df["Low"]
-#     high_prev_close = np.abs(df["High"] - df["Close"].shift())
-#     low_prev_close = np.abs(df["Low"] - df["Close"].shift())
-#     atr_df = pd.concat([high_low, high_prev_close, low_prev_close], axis=1)
-#     true_range = np.max(atr_df, axis=1)
-#     atr = true_range.rolling(14).mean()
-#     atr_df = atr.to_frame(name="ATR")
-#     ndf = pd.concat([df, atr_df], axis=1)
-#     ndf = ndf.dropna()
-#     return ndf
 
 
 def predict(model, ticker):

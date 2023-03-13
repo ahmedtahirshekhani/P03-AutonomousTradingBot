@@ -377,7 +377,15 @@ class BotRepository(BotAbstractRepository):
             where id=%s
         """
 
+
         prices = json.dumps(bot.prices)
+        appetite = bot.risk_appetite
+        if type(appetite) != str:
+            appetite = appetite.name
+        state = bot.state
+        if type(state) != str:
+            state = state.name
+        
         self.cursor.execute(
             sql,
             [
@@ -387,9 +395,9 @@ class BotRepository(BotAbstractRepository):
                 bot.initial_balance,
                 bot.current_balance,
                 bot.target_return,
-                bot.risk_appetite.name,
+                appetite,
                 bot.in_trade,
-                bot.state.name,
+                state,
                 prices,
                 bot.start_time,
                 bot.end_time,
@@ -398,10 +406,30 @@ class BotRepository(BotAbstractRepository):
             ],
         )
         for t in bot.trades:
+            
+            # sql = """
+            #     insert into trades (id, amount, start_price, started_at, trade_type, ended_at, end_price, is_profit, bot_id)
+            #     values (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            # """
+
+            # if t.id in database then update otherwise insert
             sql = """
                 insert into trades (id, amount, start_price, started_at, trade_type, ended_at, end_price, is_profit, bot_id)
                 values (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                on conflict (id) do update set
+                    amount = excluded.amount,
+                    start_price = excluded.start_price,
+                    started_at = excluded.started_at,
+                    trade_type = excluded.trade_type,
+                    ended_at = excluded.ended_at,
+                    end_price = excluded.end_price,
+                    is_profit = excluded.is_profit,
+                    bot_id = excluded.bot_id
             """
+            print("inserting trade", t)
+            trade_type = t.trade_type
+            if type(trade_type) != str:
+                trade_type = trade_type.name
             self.cursor.execute(
                 sql,
                 [
@@ -409,7 +437,7 @@ class BotRepository(BotAbstractRepository):
                     t.amount,
                     t.start_price,
                     t.started_at,
-                    t.trade_type,
+                    trade_type,
                     t.ended_at,
                     t.end_price,
                     t.is_profit,

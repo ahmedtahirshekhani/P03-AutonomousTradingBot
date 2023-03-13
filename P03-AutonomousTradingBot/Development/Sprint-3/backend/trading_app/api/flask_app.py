@@ -171,7 +171,7 @@ def add_bot():
     commands.add_bot(
         analyst_id,
         request.json["investor_id"],
-        "Test Ticker",
+        "ENGRO",
         0.0,
         request.json["risk_appetite"],
         request.json["target_return"],
