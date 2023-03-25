@@ -10,7 +10,9 @@
    <code>cd trading_app/api/</code>
 5. Run the flask server locally
    <code>flask --app flask_app --debug run </code>
+6. Run the postgresql server on localhost
+   <code>sudo -u postgres psql</code>
 
 ## To deploy backend to gcloud
 
-`gcloud app deploy`
+-   `gcloud app deploy`
