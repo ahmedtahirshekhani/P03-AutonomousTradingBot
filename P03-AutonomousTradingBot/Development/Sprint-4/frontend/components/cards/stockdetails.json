@@ -1,0 +1,202 @@
+{
+    "data": {
+        "AAPL": {
+            "request_id": "326147fcbe62aac4a7de6a285b1ec770",
+            "results": {
+                "active": true,
+                "address": {
+                    "address1": "ONE APPLE PARK WAY",
+                    "city": "CUPERTINO",
+                    "postal_code": "95014",
+                    "state": "CA"
+                },
+                "branding": {
+                    "icon_url": "https://api.polygon.io/v1/reference/company-branding/d3d3LmFwcGxlLmNvbQ/images/2023-01-01_icon.jpeg",
+                    "logo_url": "https://api.polygon.io/v1/reference/company-branding/d3d3LmFwcGxlLmNvbQ/images/2023-01-01_logo.svg"
+                },
+                "cik": "0000320193",
+                "composite_figi": "BBG000B9XRY4",
+                "currency_name": "usd",
+                "description": "Apple designs a wide variety of consumer electronic devices, including smartphones (iPhone), tablets (iPad), PCs (Mac), smartwatches (Apple Watch), and AirPods. The iPhone makes up most of Apple's total revenue. In addition, Apple offers its customers a variety of services such as Apple Music, iCloud, Apple Care, Apple TV+, Apple Arcade, Apple Fitness, Apple Card, and Apple Pay, among others. Apple's products include internally developed software and semiconductors, and the firm is well known for its integration of hardware, software, semiconductors, and services. Apple's products are distributed online as well as through company-owned stores and third-party retailers. The company generates roughly 40% of its revenue from the Americas, with the remainder earned internationally.",
+                "homepage_url": "https://www.apple.com",
+                "list_date": "1980-12-12",
+                "locale": "us",
+                "market": "stocks",
+                "market_cap": 2310978563090.0,
+                "name": "Apple Inc.",
+                "phone_number": "(408) 996-1010",
+                "primary_exchange": "XNAS",
+                "round_lot": 100,
+                "share_class_figi": "BBG001S5N8V8",
+                "share_class_shares_outstanding": 15908120000,
+                "sic_code": "3571",
+                "sic_description": "ELECTRONIC COMPUTERS",
+                "ticker": "AAPL",
+                "ticker_root": "AAPL",
+                "total_employees": 164000,
+                "type": "CS",
+                "weighted_shares_outstanding": 15836213000
+            },
+            "status": "OK"
+        },
+        
+        "HPQ": {
+            "request_id": "9b00065b73236a57ce44b9f48e484513",
+            "results": {
+                "active": true,
+                "address": {
+                    "address1": "1501 PAGE MILL ROAD",
+                    "city": "PALO ALTO",
+                    "postal_code": "94304",
+                    "state": "CA"
+                },
+                "branding": {
+                    "icon_url": "https://api.polygon.io/v1/reference/company-branding/d3d3LmhwLmNvbQ/images/2023-01-01_icon.jpeg",
+                    "logo_url": "https://api.polygon.io/v1/reference/company-branding/d3d3LmhwLmNvbQ/images/2023-01-01_logo.svg"
+                },
+                "cik": "0000047217",
+                "composite_figi": "BBG000KHWT55",
+                "currency_name": "usd",
+                "description": "HP (formerly Hewlett-Packard) is a behemoth in the PC and printing markets. It has focused on these markets since it exited IT infrastructure in 2015 with the split from Hewlett Packard Enterprise. HP focuses on the commercial market but maintains sales of consumer devices and printers. The firm has a broad and global customer base, with only one-third of sales coming from the U.S. It completely outsources manufacturing and relies heavily on channel partners for its sales and marketing.",
+                "homepage_url": "https://www.hp.com",
+                "list_date": "1957-11-06",
+                "locale": "us",
+                "market": "stocks",
+                "market_cap": 28708121617.08,
+                "name": "HP Inc.",
+                "phone_number": "(650) 857-1501",
+                "primary_exchange": "XNYS",
+                "round_lot": 100,
+                "share_class_figi": "BBG001S6W7N7",
+                "share_class_shares_outstanding": 982150000,
+                "sic_code": "3570",
+                "sic_description": "COMPUTER & OFFICE EQUIPMENT",
+                "ticker": "HPQ",
+                "ticker_root": "HPQ",
+                "total_employees": 58000,
+                "type": "CS",
+                "weighted_shares_outstanding": 982145796
+            },
+            "status": "OK"
+        },
+        "META": {
+            "request_id": "922c8d3e81bff759a7be9a1cba008659",
+            "results": {
+                "active": true,
+                "address": {
+                    "address1": "1601 WILLOW ROAD",
+                    "city": "MENLO PARK",
+                    "postal_code": "94025",
+                    "state": "CA"
+                },
+                "branding": {
+                    "icon_url": "https://api.polygon.io/v1/reference/company-branding/d3d3LmZhY2Vib29rLmNvbQ/images/2023-01-01_icon.jpeg",
+                    "logo_url": "https://api.polygon.io/v1/reference/company-branding/d3d3LmZhY2Vib29rLmNvbQ/images/2023-01-01_logo.svg"
+                },
+                "cik": "0001326801",
+                "composite_figi": "BBG000MM2P62",
+                "currency_name": "usd",
+                "description": "Meta is the world's largest online social network, with 2.5 billion monthly active users. Users engage with each other in different ways, exchanging messages and sharing news events, photos, and videos. On the video side, the firm is in the process of building a library of premium content and monetizing it via ads or subscription revenue. Meta refers to this as Facebook Watch. The firm's ecosystem consists mainly of the Facebook app, Instagram, Messenger, WhatsApp, and many features surrounding these products. Users can access Facebook on mobile devices and desktops. Advertising revenue represents more than 90% of the firm's total revenue, with 50% coming from the U.S. and Canada and 25% from Europe. With gross margins above 80%, Meta operates at a 30%-plus margin.",
+                "homepage_url": "https://www.facebook.com",
+                "list_date": "2012-05-18",
+                "locale": "us",
+                "market": "stocks",
+                "market_cap": 342222339043.08,
+                "name": "Meta Platforms, Inc. Class A Common Stock",
+                "phone_number": "650-618-7714",
+                "primary_exchange": "XNAS",
+                "round_lot": 100,
+                "share_class_figi": "BBG001SQCQC5",
+                "share_class_shares_outstanding": 2255320000,
+                "sic_code": "7370",
+                "sic_description": "SERVICES-COMPUTER PROGRAMMING, DATA PROCESSING, ETC.",
+                "ticker": "META",
+                "ticker_root": "META",
+                "total_employees": 87314,
+                "type": "CS",
+                "weighted_shares_outstanding": 2255320542
+            },
+            "status": "OK"
+        },
+        "SNAP": {
+            "request_id": "385bff4d97e598d33ed2b46db57a0750",
+            "results": {
+                "active": true,
+                "address": {
+                    "address1": "3000 31ST STREET",
+                    "city": "SANTA MONICA",
+                    "postal_code": "90405",
+                    "state": "CA"
+                },
+                "branding": {
+                    "icon_url": "https://api.polygon.io/v1/reference/company-branding/d3d3LnNuYXAuY29t/images/2023-01-01_icon.jpeg",
+                    "logo_url": "https://api.polygon.io/v1/reference/company-branding/d3d3LnNuYXAuY29t/images/2023-01-01_logo.svg"
+                },
+                "cik": "0001564408",
+                "composite_figi": "BBG00441QMJ7",
+                "currency_name": "usd",
+                "description": "Snap, which refers to itself as a camera company, has one of the most popular social networking apps, Snapchat, in developed regions such as North America and Europe. The firm has approximately 158 million daily active users. Snap generates nearly all of its revenue from advertising with 88% coming from the U.S. The firm is headquartered in Venice, California.",
+                "homepage_url": "http://www.snap.com",
+                "list_date": "2017-03-02",
+                "locale": "us",
+                "market": "stocks",
+                "market_cap": 17598932684.61,
+                "name": "Snap Inc.",
+                "phone_number": "(310) 399-3339",
+                "primary_exchange": "XNYS",
+                "round_lot": 100,
+                "share_class_figi": "BBG00441QMK5",
+                "share_class_shares_outstanding": 1358840000,
+                "sic_code": "7370",
+                "sic_description": "SERVICES-COMPUTER PROGRAMMING, DATA PROCESSING, ETC.",
+                "ticker": "SNAP",
+                "ticker_root": "SNAP",
+                "total_employees": 5661,
+                "type": "CS",
+                "weighted_shares_outstanding": 1613101071
+            },
+            "status": "OK"
+        },
+        "TSLA": {
+            "request_id": "10cb614c9b3d7cbd831d5654706be24a",
+            "results": {
+                "active": true,
+                "address": {
+                    "address1": "3500 DEER CREEK RD",
+                    "city": "PALO ALTO",
+                    "postal_code": "94304",
+                    "state": "CA"
+                },
+                "branding": {
+                    "icon_url": "https://api.polygon.io/v1/reference/company-branding/d3d3LnRlc2xhLmNvbQ/images/2023-01-01_icon.png",
+                    "logo_url": "https://api.polygon.io/v1/reference/company-branding/d3d3LnRlc2xhLmNvbQ/images/2023-01-01_logo.svg"
+                },
+                "cik": "0001318605",
+                "composite_figi": "BBG000N9MNX3",
+                "currency_name": "usd",
+                "description": "Founded in 2003 and based in Palo Alto, California, Tesla is a vertically integrated sustainable energy company that also aims to transition the world to electric mobility by making electric vehicles. The company sells solar panels and solar roofs for energy generation plus batteries for stationary storage for residential and commercial properties including utilities. Tesla has multiple vehicles in its fleet, which include luxury and midsize sedans and crossover SUVs. The company also plans to begin selling more affordable sedans and small SUVs, a light truck, a semi truck, and a sports car. Global deliveries in 2022 were a little over 1.3 million vehicles.",
+                "homepage_url": "https://www.tesla.com",
+                "list_date": "2010-06-29",
+                "locale": "us",
+                "market": "stocks",
+                "market_cap": 561764160677.1,
+                "name": "Tesla, Inc. Common Stock",
+                "phone_number": "650-681-5000",
+                "primary_exchange": "XNAS",
+                "round_lot": 100,
+                "share_class_figi": "BBG001SQKGD7",
+                "share_class_shares_outstanding": 3157750000,
+                "sic_code": "3711",
+                "sic_description": "MOTOR VEHICLES & PASSENGER CAR BODIES",
+                "ticker": "TSLA",
+                "ticker_root": "TSLA",
+                "total_employees": 99290,
+                "type": "CS",
+                "weighted_shares_outstanding": 3157752449
+            },
+            "status": "OK"
+        }
+    },
+    "message": "Stock details fetched successfully!",
+    "success": true
+}

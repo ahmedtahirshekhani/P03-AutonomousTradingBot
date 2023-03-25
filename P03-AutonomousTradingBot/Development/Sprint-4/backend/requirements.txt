@@ -1,0 +1,23 @@
+Flask
+# psycopg2
+psycopg2-binary
+pytest
+requests
+gunicorn
+python-dotenv
+flask_jwt_extended
+keras==2.9.0
+Keras-Preprocessing==1.1.2
+keras-vis==0.4.1
+scikit-learn==1.0.2
+numpy
+pandas==1.3.5
+tensorflow==2.11.0
+tensorflow-datasets==4.6.0
+tensorflow-estimator==2.9.0
+tensorflow-gcs-config==2.9.1
+tensorflow-hub==0.12.0
+tensorflow-io-gcs-filesystem==0.28.0
+tensorflow-metadata==1.12.0
+tensorflow-probability==0.17.0
+psx-data-reader

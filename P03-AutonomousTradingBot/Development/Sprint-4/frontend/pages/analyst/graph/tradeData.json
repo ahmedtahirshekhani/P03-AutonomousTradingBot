@@ -1,0 +1,74 @@
+[
+  {
+    "id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+    "bot_id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12",
+    "amount": 500.00,
+    "start_price": 400.00,
+    "started_at": "2022-01-01 12:00:00+00:00",
+    "trade_type": "put",
+    "ended_at": "2022-01-01 13:00:00+00:00",
+    "end_price": 810.00,
+    "is_profit": true,
+    "stock_name": "HBL"
+  },
+  {
+    "id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13",
+    "bot_id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14",
+    "amount": 1000.00,
+    "start_price": 5800.00,
+    "started_at": "2022-02-01 10:00:00+00:00",
+    "trade_type": "call",
+    "ended_at": "2022-02-01 11:00:00+00:00",
+    "end_price": 4200.00,
+    "is_profit": true,
+    "stock_name": "ENGRO"
+  },
+  {
+    "id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15",
+    "bot_id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a16",
+    "amount": 750.00,
+    "start_price": 920.00,
+    "started_at": "2022-03-01 14:00:00+00:00",
+    "trade_type": "put",
+    "ended_at": "2022-03-01 15:00:00+00:00",
+    "end_price": 400.00,
+    "is_profit": false,
+    "stock_name": "SYS"
+  },
+  {
+    "id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a17",
+    "bot_id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a18",
+    "amount": 2500.00,
+    "start_price": 3400.00,
+    "started_at": "2022-04-01 16:00:00+00:00",
+    "trade_type": "call",
+    "ended_at": "2022-04-01 17:00:00+00:00",
+    "end_price": 2300.00,
+    "is_profit": false,
+    "stock_name": "HBL"
+    },
+    {
+    "id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a19",
+    "bot_id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a20",
+    "amount": 5000.00,
+    "start_price": 5650.00,
+    "started_at": "2022-05-01 09:00:00+00:00",
+    "trade_type": "put",
+    "ended_at": "2022-05-01 10:00:00+00:00",
+    "end_price": 5800.00,
+    "is_profit": true,
+    "stock_name": "SILK"
+    },
+    {
+    "id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a21",
+    "bot_id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a22",
+    "amount": 1500.00,
+    "start_price": 900.00,
+    "started_at": "2022-06-01 13:00:00+00:00",
+    "trade_type": "call",
+    "ended_at": "2022-06-01 14:00:00+00:00",
+    "end_price": 710.00,
+    "is_profit": true,
+    "stock_name": "ENGRO"
+    }
+]
