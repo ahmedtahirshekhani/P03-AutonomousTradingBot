@@ -52,7 +52,7 @@ def register_investor():
         return jsonify({"success": False, "message": msg}), 400
 
     try:
-        
+
         ret = commands.register_investor(
             request.json["name"],
             request.json["address"],
@@ -114,7 +114,7 @@ def login():
 
 @app.route(prefix + "/auth/logout", methods=["POST"])
 @jwt_required()
-def analyst_logout():
+def logout():
     if request.json is None:
         msg = "payload missing in request"
         return jsonify({"success": False, "message": msg}), 400
@@ -156,7 +156,6 @@ def add_bot():
     analyst = queries.get_analyst(analyst_email, uow=unit_of_work.UnitOfWork())
     analyst_id = analyst.id
 
-
     # commands.add_bot(
     #     analyst_id,
     #     request.json["investor_id"],
@@ -166,7 +165,6 @@ def add_bot():
     #     request.json["target_return"],
     #     uow=unit_of_work.UnitOfWork(),
     # )
-
 
     commands.add_bot(
         analyst_id,
@@ -269,9 +267,7 @@ def get_all_investors():
 @app.route(prefix + "/predictions", methods=["GET"])
 def get_stock_details():
     try:
-        tickers = [
-            "ENGRO", "SILK","SYS", "HBL"
-        ]
+        tickers = ["ENGRO", "SILK", "SYS", "HBL"]
         predictions = []
         for ticker in tickers:
             Open, High, Low, Close, ATR = queries.predict(
@@ -287,8 +283,7 @@ def get_stock_details():
                     "ATR": float(ATR),
                 }
             )
-        
-        
+
         ret = successMessage("Stock details fetched successfully!", predictions)
         status = 200
     except Exception as e:
