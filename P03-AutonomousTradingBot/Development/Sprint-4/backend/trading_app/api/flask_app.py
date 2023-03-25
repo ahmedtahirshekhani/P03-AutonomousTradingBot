@@ -156,16 +156,6 @@ def add_bot():
     analyst = queries.get_analyst(analyst_email, uow=unit_of_work.UnitOfWork())
     analyst_id = analyst.id
 
-    # commands.add_bot(
-    #     analyst_id,
-    #     request.json["investor_id"],
-    #     request.json["stocks_ticker"],
-    #     request.json["balance"],
-    #     request.json["risk_appetite"],
-    #     request.json["target_return"],
-    #     uow=unit_of_work.UnitOfWork(),
-    # )
-
     commands.add_bot(
         analyst_id,
         request.json["investor_id"],
