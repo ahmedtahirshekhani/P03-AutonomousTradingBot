@@ -282,6 +282,23 @@ def get_stock_details():
 
     return ret, status
 
+@app.route(prefix + "/train-model", methods=["GET"])
+def train_model():
+    if request.json is None:
+        msg = "payload missing in request"
+        return jsonify({"success": False, "message": msg}), 400
+    
+    try:
+        ticker = request.json['ticker']
+        commands.train_model(ticker=ticker)
+
+        ret = successMessage("Model trained successfully!", {})
+        status = 200
+    except Exception as e:
+        ret = errorMessage(str(e))
+        status = 400
+
+    return ret, status
 
 # get all stock details using ticker
 @app.route(prefix + "/stocks", methods=["GET"])

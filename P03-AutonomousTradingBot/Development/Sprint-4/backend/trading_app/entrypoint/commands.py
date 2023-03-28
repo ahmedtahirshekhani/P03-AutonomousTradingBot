@@ -11,6 +11,7 @@ from hashlib import sha256
 from datetime import datetime
 from typing import List
 from uuid import uuid4
+from .mlmodelclass import TrainModel
 
 
 def create_analyst(
@@ -194,3 +195,11 @@ def add_trade(
         fetched_bot = uow.bots.get(bot_id)
         fetched_bot.add_trade(price=price, quantity=quantity, timestamp=timestamp)
         uow.bots.save(fetched_bot)
+
+"""
+ML module
+"""
+
+def train_model(ticker: str) -> None:
+    model = TrainModel(ticker)
+    model.train()

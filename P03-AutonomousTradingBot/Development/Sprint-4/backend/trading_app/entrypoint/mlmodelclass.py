@@ -9,6 +9,7 @@ from keras.utils import to_categorical
 import matplotlib.pyplot as plt
 from datetime import date 
 from dateutil.relativedelta import relativedelta
+
 class TrainModel():
   def __init__(self, ticker):
     self.ticker = ticker
@@ -24,8 +25,8 @@ class TrainModel():
   
   def get_test_data(self):
     now = date.today()
-    two_months_earlier = (now + relativedelta(months=-2))
-    data = psx.stocks(self.ticker, start=two_months_earlier, end=date.today())
+    three_months_earlier = (now + relativedelta(months=-3))
+    data = psx.stocks(self.ticker, start=three_months_earlier, end=date.today())
     return data
 
   def atr_col(self,df):
@@ -44,7 +45,7 @@ class TrainModel():
     regressor = self.model()
     X_train, y_train, X_test, y_test = self.data_preprocess()
     regressor.fit(x = X_train, y = y_train, batch_size = 32, epochs = 100)
-    regressor.save(f'/content/drive/MyDrive/Sproj/model/{self.ticker}.h5')
+    regressor.save(f"../../../ML/{self.ticker}.h5")
 
   def model(self):
     regressor = keras.Sequential()
