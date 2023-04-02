@@ -104,6 +104,10 @@ def get_close_price(
     return close_price, current_date.timestamp()
 
 
+def get_all_stock_tickers():
+    return psx.tickers()
+
+
 """
 ML Module APIs
 """

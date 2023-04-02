@@ -159,7 +159,7 @@ def add_bot():
     new_bot = commands.add_bot(
         analyst_id,
         request.json["investor_id"],
-        "ENGRO",
+        request.json["stock_ticker"],
         request.json["balance"],
         request.json["risk_appetite"],
         request.json["target_return"],
@@ -353,3 +353,20 @@ def get_bot():
     )
 
     return successMessage(message="Bot successfully fetched!", data=fetched_bot), 200
+
+
+@app.route(prefix + "/get-stock-tickers", methods=["GET"])
+def get_stock_tickers():
+
+    stock_tickers = queries.get_all_stock_tickers()
+
+    return (
+        successMessage(
+            message="Tickers successfully fetched!",
+            data={
+                "stock_tickers": list(stock_tickers["symbol"]),
+                "names": list(stock_tickers["name"]),
+            },
+        ),
+        200,
+    )
