@@ -12,6 +12,7 @@ const Home: NextPage = () => {
   const [risk, setRisk] = useState("");
   const [roi, setRoi] = useState("");
   const [duration, setDuration] = useState("");
+  const [stock_ticker, setStock_ticker] = useState("");
 
   const handleSubmit = async () => {
     const response = await addBot(router.query.investor_id, risk, roi, amount);
