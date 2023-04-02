@@ -5,9 +5,12 @@ from ..domain.model import Bot, Analyst
 import requests
 import os
 from datetime import datetime
+from datetime import date
 from dateutil.relativedelta import relativedelta
 from .mlmodelclass import TrainModel
-import psx 
+import psx
+
+
 def get_analyst(analyst_email: str, uow: UnitOfWork) -> Analyst:
     with uow:
         fetched_analyst = uow.analysts.get(analyst_email=analyst_email)
@@ -60,56 +63,45 @@ def get_all_investors(uow: UnitOfWork):
 
 
 """
-Polygon APIs
+Stock data APIs
 """
 
 
-# def get_stock_details(stocks):
-#     stockDetails = {}
-#     polygon_base_api = "https://api.polygon.io/v3/reference/tickers/"
-#     for stock in stocks:
-#         polygon_api = (
-#             polygon_base_api + stock + "?apiKey=" + os.environ.get("POLYGON_API_KEY")
-#         )
-#         response = requests.get(polygon_api)
-#         stockDetails[stock] = response.json()
-#     return stockDetails
-
-
-def get_last_close_price(stock_ticker: str, timestamp: int):
+def get_close_price(
+    stock_ticker: str,
+    timestamp: int = int(datetime.now().timestamp()),
+):
     # check if today is a trading day
     # if not, get the last trading day
     # get the last close price from the last trading day
     # return the last close price
-    day = datetime.today().weekday()
-    time = datetime.today().time()
-   
-    if day >= 0 and day <= 4:
-        timestamp = datetime.today()- relativedelta(days=1)
-    if day == 5:
-        timestamp = datetime.today() - relativedelta(days=2)
-    if day == 6:
-        timestamp = datetime.today() - relativedelta(days=3)
-    if time.hour < 9 or time.hour > 16:
-        timestamp = timestamp - relativedelta(days=1)
 
-   
+    current_date = datetime.fromtimestamp(timestamp)
+
     datalen = 0
     while datalen == 0:
-        data = psx.stocks(stock_ticker, start=timestamp, end=datetime.today())
+        # Loop until no exception occurs
+        while True:
+            try:
+                data = psx.stocks(
+                    stock_ticker,
+                    start=current_date,
+                    end=current_date + relativedelta(days=1),
+                )
+                break
+            except:
+                print("Exception occured when fetching data from psx stocks")
+
         datalen = len(data)
-        timestamp = timestamp - relativedelta(days=1)
+        current_date = current_date - relativedelta(days=1)
 
     # get the last row of the data dataframe
     dataval = data.iloc[-1]
-    print(dataval["Close"])
-    
-    return dataval["Close"], timestamp.timestamp()
-    # polygon_api = f"https://api.polygon.io/v2/aggs/ticker/{stock_ticker}/range/1/hour/{timestamp}/{timestamp}?adjusted=true&sort=asc&apiKey={api_key}"
-    # response = requests.get(polygon_api)
-    # res = response.json()
-    # return res.results[-1].c, res.results[-1].t
+    close_price = dataval["Close"]
 
+    print("Last close price:", close_price, current_date.timestamp())
+
+    return close_price, current_date.timestamp()
 
 
 """
@@ -117,9 +109,7 @@ ML Module APIs
 """
 
 
-def predict(model, ticker):
-    
+def predict(model, ticker, till=date.today()):
+
     train_model = TrainModel(ticker)
-    return train_model.predict(model)
-
-
+    return train_model.predict(model, till=till)

@@ -86,7 +86,7 @@ class Analyst:
         self, name: str, address: str, phone_number: str, email: str, ntn_number: str
     ) -> RegisterInvestorReturn:
         password = str(uuid4())[:INVESTOR_PASS_LEN]  # Autogenerate password
-    
+
         return RegisterInvestorReturn(
             investor=Investor(
                 id=str(uuid4()),
@@ -118,20 +118,20 @@ Future upgrades
 """
 
 
-class BotState(Enum):
+class BotState(str, Enum):
     IDLE = 1
     RUNNING = 2
     FINISHED = 3
     TERMINATED = 4
 
 
-class RiskAppetite(Enum):
+class RiskAppetite(str, Enum):
     LOW = 1
     MID = 2
     HIGH = 3
 
 
-class TradeType(Enum):
+class TradeType(str, Enum):
     CALL = 1
     PUT = 2
 
@@ -145,7 +145,7 @@ class Trade:
     trade_type: TradeType
     ended_at: datetime = datetime.max
     end_price: float = 0
-    is_profit: bool = False # Was this a profitable trade
+    is_profit: bool = False  # Was this a profitable trade
     # buying_price: float
     # selling_price: float
     # spread: float
@@ -155,7 +155,6 @@ class Trade:
         self.amount = amount
         self.start_price = price
         self.started_at = datetime.now()
-        
 
 
 @dataclass
@@ -163,7 +162,7 @@ class Bot:
     id: str
     analyst_id: str
     investor_id: str
-    stocks_ticker: str # Identifier of stock
+    stocks_ticker: str  # Identifier of stock
     initial_balance: float
     current_balance: float
     target_return: float
@@ -191,36 +190,32 @@ class Bot:
 
         last_trade.ended_at = datetime.fromtimestamp(timestamp)
         last_trade.end_price = price
+
         price_diff = 0
+
         if type(last_trade.trade_type) == str:
             last_trade.trade_type = TradeType[last_trade.trade_type]
-        print("Last trade type: ", last_trade.trade_type)
+
+        eP = float(price)
+        sP = float(last_trade.start_price)
 
         if last_trade.trade_type == TradeType.CALL:
-            # convert to float
+            price_diff = eP - sP
+            self.current_balance += price_diff
+        else:
+            price_diff = sP - eP
+            self.current_balance += price_diff
 
-            eP = float(price)
-            sP = float(last_trade.start_price)
-            price_diff = (eP - sP)*1.0
-            
-            self.current_balance = float(self.current_balance) + price_diff
-            print("Price diff: ", price_diff, "Self balance: ", self.current_balance)
-        # else:
-        #     eP = float(last_trade.end_price)
-        #     sP = float(price)
-        #     price_diff = sP - eP
-        #     self.current_balance += price_diff
+        print("Price diff: ", price_diff, "Self balance: ", self.current_balance)
 
-        if price_diff > 0:
+        if price_diff >= 0:
             last_trade.is_profit = True
-
-        last_trade.end_price = price
-        last_trade.ended_at = datetime.fromtimestamp(timestamp)
-        last_trade.trade_type = TradeType.PUT
+        else:
+            last_trade.is_profit = False
 
         self.trades[-1] = last_trade
 
-    def handle_execution(self, timestamp: int, price: float):
+    def handle_execution(self, timestamp: int, price: float, prediction: dict):
         """
         Trading Algorithm
 
@@ -244,16 +239,24 @@ class Bot:
                Append this action to the bot
         """
 
+        ENTRY_STRENGTH = 1
+        EXIT_STRENGTH = 1
+
+        strength = abs(prediction["close"] - price) / prediction["atr"]
+        up_trend = True if prediction["close"] - price > 0 else False
+        current_return = (
+            (self.current_balance - self.initial_balance) / self.initial_balance
+        ) * 100
+
         # pass string to enum to get enum value
         self.state = BotState.RUNNING
         if self.state != BotState.RUNNING:
             raise Exception("Bot is not in running state")
-        print("Price: ", price, "Prices: ", self.prices)
-        # convert timestamp from datetime to int
-        print("Timestamp: ", timestamp, "Type: ", type(timestamp)   )
+
         self.prices[timestamp] = price
-        print("Prices: ", self.prices)
-        should_stop_bot = True if random.randint(0, 1) == 1 else True
+
+        should_stop_bot = True if current_return >= self.target_return else False
+        print("Should stop bot?", should_stop_bot, current_return, self.target_return)
 
         if should_stop_bot:
             if self.in_trade:
@@ -261,32 +264,39 @@ class Bot:
                 self.close_trade(timestamp=timestamp, price=price)
 
             self.state = BotState.FINISHED
+            return
 
         if self.in_trade:
-            print("In trade")
+            print("In a trade")
+
             # Exit strategies
-            should_close_trade = True if random.randint(0, 1) == 1 else True
-            print("Should close trade: ", should_close_trade)
+            should_close_trade = False
+            if strength >= EXIT_STRENGTH:
+                if self.trades[-1].trade_type == TradeType.CALL and up_trend == False:
+                    should_close_trade = True
+                elif self.trades[-1].trade_type == TradeType.PUT and up_trend == True:
+                    should_close_trade = True
+
+            print("Should close trade?", should_close_trade, strength)
+
             if should_close_trade:
                 self.close_trade(timestamp=timestamp, price=price)
         else:
             # Entry strategies
-            print("Entering trade")
-            indicator, amount = random.randint(-1, 1), 100
-            should_enter_trade = False if indicator == 0 else True
-            print("Should enter trade: ", should_enter_trade)
+            print("Not in a trade")
+            should_enter_trade = True if strength > ENTRY_STRENGTH else False
+
+            print("Should enter trade?", should_enter_trade, strength)
 
             if should_enter_trade:
+                print("Entering a new trade")
+
                 self.in_trade = True
-                print("Entered trade")
                 trade = Trade(
                     id=get_random_id(),
-                    trade_type=TradeType.CALL,
-                    amount=amount,
+                    trade_type=TradeType.CALL if up_trend else TradeType.PUT,
+                    amount=100,
                     start_price=price,
-                    started_at=datetime.fromtimestamp(timestamp)
+                    started_at=datetime.fromtimestamp(timestamp),
                 )
                 self.trades.append(trade)
-            print("Trades: ", self.trades)
-
-        
