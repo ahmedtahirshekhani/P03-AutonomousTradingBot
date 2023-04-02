@@ -15,8 +15,8 @@ interface Bot {
   state: string;
   risk_appetite: string;
   target_return: string;
-  duration: string;
-  amount: string
+  stocks_ticker: string;
+  initial_balance: string
 }
 
 const Home: NextPage = () => {
@@ -58,27 +58,25 @@ const Home: NextPage = () => {
     <AnalystLayout>
       <div className="hero min-h-screen bg-base-200">
         <div className="hero-content text-center">
-          <div className="max-w-2xl mx-auto">
-            <h1 className="text-5xl font-bold">Current Instances</h1>
-            <p className="py-6"></p>
+          <div className="max-w-4xl mx-auto ">
+            <h1 className="text-5xl font-bold mb-6 text-primary">Current Instances</h1>
 
             {bots.length > 0 ? (
-
-            <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 justify-items-start">
               {bots.map((b, i) => (
                 <div
                   key={i}
-                  className="p-4 card w-96 bg-neutral text-neutral-content border-primary"
+                  className="p-4 card w-96 bg-blue text-neutral-content border-primary"
                 >
                   <div className="card-body items-center text-center">
-                    <h2 className="card-title font-bold">{b.id}</h2>
-                    <p className="font-bold">Configuration Parameters</p>
+                    <h2 className="card-title font-bold text-primary">Bot ID: {b.id}</h2>
+                    <p className="font-bold">Configuration Parameters:</p>
                     <ul>
                       <li className="text-info">State: {b.state}</li>
-                      <li>Amount Invested: {b.amount}</li>
+                      <li>Amount Invested: {b.initial_balance}</li>
                       <li>Risk Appetite: {b.risk_appetite}</li>
-                      <li>Target Return: {b.target_return}</li>
-                      <li>Duration: {b.duration}</li>
+                      <li>Target Return: {b.target_return}%</li>
+                      <li>Stock: {b.stocks_ticker}</li>
                     </ul>
                     <div className="card-actions justify-end">
                       <div className="btn-container">
@@ -95,8 +93,8 @@ const Home: NextPage = () => {
                         >
                           Terminate
                         </button>
-                        <Link href="/analyst/graph">
-                          <button className="btn btn-accent">View Graph</button>
+                        <Link href="/analyst/graph/table">
+                          <button className="btn btn-accent">View Trades</button>
                         </Link>
                         </div>
                       </div>

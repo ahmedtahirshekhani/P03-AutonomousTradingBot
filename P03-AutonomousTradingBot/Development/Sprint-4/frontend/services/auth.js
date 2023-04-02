@@ -37,8 +37,7 @@ const registerInvestor = async (ntn, inv_email, name, phone, address) => {
     address: address,
     investor_email: inv_email,
     phone_number: phone,
-    analyst_email: "",
-    ntn: ntn,
+    ntn_number: ntn,
   });
 
   var config = {
@@ -121,16 +120,14 @@ const addBot = async (
   risk_appetite,
   target_return,
   amount,
-  duration
+  stock_ticker
 ) => {
   var data = JSON.stringify({
     investor_id: investor_id,
-    trades: [],
-    assigned_model: 0,
+    stock_ticker: stock_ticker,
+    balance : amount,
     risk_appetite: risk_appetite,
     target_return: target_return,
-    duration: "10-12-2023",
-    amount: amount,
   });
 
   var config = {

@@ -11,11 +11,10 @@ const Home: NextPage = () => {
   const [amount, setAmount] = useState("");
   const [risk, setRisk] = useState("");
   const [roi, setRoi] = useState("");
-  const [duration, setDuration] = useState("");
   const [stock_ticker, setStock_ticker] = useState("");
 
   const handleSubmit = async () => {
-    const response = await addBot(router.query.investor_id, risk, roi, amount);
+    const response = await addBot(router.query.investor_id, risk, roi, amount, stock_ticker);
     Swal.fire(response.message);
     router.push("/analyst");
   };
@@ -38,17 +37,19 @@ const Home: NextPage = () => {
                 onChange={(e) => setAmount(e.target.value)}
               />
 
-              {/* <label className="label">
-                <span className="label-text">Duration Till ?</span>
-              </label>
-              <input
-                type="date-local"
-                placeholder="Date"
-                className="input input-primary"
-                onChange={(e) => setDuration(e.target.value)}
-              /> */}
 
               <label className="label"></label>
+
+
+              <label className="label">
+                <span className="label-text">Stock to trade in ?</span>
+              </label>
+              <input
+                type="ticker"
+                placeholder="Stock Ticker"
+                className="input input-primary"
+                onChange={(e) => setStock_ticker(e.target.value)}
+              />
 
               <label className="label">
                 <span className="label-text">Maximum Drawdown(%) ?</span>
