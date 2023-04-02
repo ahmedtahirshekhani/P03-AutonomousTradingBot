@@ -3,7 +3,7 @@ import json
 from typing import List, Dict, Set
 from uuid import UUID
 
-from ..domain.model import Analyst, Investor, Bot, Trade, BotState
+from ..domain.model import Analyst, Investor, Bot, Trade, BotState, TradeType
 
 
 class AnalystAbstractRepository(ABC):
@@ -274,12 +274,12 @@ class BotRepository(BotAbstractRepository):
 
     # TODO: add new trades here and on save also
     def add(self, bot: Bot):
-  
+
         sql = """
             insert into bots (id, analyst_id, investor_id, stocks_ticker, initial_balance, current_balance, target_return, risk_appetite, in_trade, state, prices, start_time, end_time, assigned_model)
             values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
-        
+
         prices = json.dumps(bot.prices)
         self.cursor.execute(
             sql,
@@ -297,7 +297,7 @@ class BotRepository(BotAbstractRepository):
                 prices,
                 bot.start_time,
                 bot.end_time,
-                bot.assigned_model       
+                bot.assigned_model,
             ],
         )
 
@@ -361,7 +361,7 @@ class BotRepository(BotAbstractRepository):
                     amount=r[1],
                     start_price=r[2],
                     started_at=r[3],
-                    trade_type=r[4],
+                    trade_type=TradeType[r[4]],
                     ended_at=r[5],
                     end_price=r[6],
                     is_profit=r[7],
@@ -377,7 +377,6 @@ class BotRepository(BotAbstractRepository):
             where id=%s
         """
 
-
         prices = json.dumps(bot.prices)
         appetite = bot.risk_appetite
         if type(appetite) != str:
@@ -385,7 +384,7 @@ class BotRepository(BotAbstractRepository):
         state = bot.state
         if type(state) != str:
             state = state.name
-        
+
         self.cursor.execute(
             sql,
             [
@@ -406,7 +405,7 @@ class BotRepository(BotAbstractRepository):
             ],
         )
         for t in bot.trades:
-            
+
             # sql = """
             #     insert into trades (id, amount, start_price, started_at, trade_type, ended_at, end_price, is_profit, bot_id)
             #     values (%s, %s, %s, %s, %s, %s, %s, %s, %s)
@@ -426,10 +425,11 @@ class BotRepository(BotAbstractRepository):
                     is_profit = excluded.is_profit,
                     bot_id = excluded.bot_id
             """
-            print("inserting trade", t)
+
             trade_type = t.trade_type
             if type(trade_type) != str:
                 trade_type = trade_type.name
+
             self.cursor.execute(
                 sql,
                 [
@@ -444,6 +444,7 @@ class BotRepository(BotAbstractRepository):
                     bot.id,
                 ],
             )
+
     def get_all_running_bots(self) -> List[Bot]:
         bot_sql = """
             select id, analyst_id, investor_id, stocks_ticker, initial_balance, current_balance, target_return, risk_appetite, in_trade, state, prices, start_time, end_time, assigned_model
@@ -473,9 +474,9 @@ class BotRepository(BotAbstractRepository):
                 analyst_id=bot_row[1],
                 investor_id=bot_row[2],
                 stocks_ticker=bot_row[3],
-                initial_balance=bot_row[4],
-                current_balance=bot_row[5],
-                target_return=bot_row[6],
+                initial_balance=float(bot_row[4]),
+                current_balance=float(bot_row[5]),
+                target_return=float(bot_row[6]),
                 risk_appetite=bot_row[7],
                 in_trade=bot_row[8],
                 state=bot_row[9],
@@ -489,7 +490,7 @@ class BotRepository(BotAbstractRepository):
                         amount=r[1],
                         start_price=r[2],
                         started_at=r[3],
-                        trade_type=r[4],
+                        trade_type=TradeType[r[4]],
                         ended_at=r[5],
                         end_price=r[6],
                         is_profit=r[7],

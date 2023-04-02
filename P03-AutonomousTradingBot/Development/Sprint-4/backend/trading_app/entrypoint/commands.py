@@ -1,17 +1,11 @@
 from .unit_of_work import AbstractUnitOfWork
-from ..domain.model import (
-    Analyst,
-    Bot,
-    RiskAppetite,
-    RegisterInvestorReturn,
-    BotState
-)
-from .queries import (get_last_close_price)
+from ..domain.model import Analyst, Bot, RiskAppetite, RegisterInvestorReturn
+from .queries import predict, get_close_price
 from hashlib import sha256
-from datetime import datetime
-from typing import List
 from uuid import uuid4
 from .mlmodelclass import TrainModel
+from datetime import datetime
+from datetime import date
 
 
 def create_analyst(
@@ -44,6 +38,7 @@ def create_analyst(
         )
         uow.analysts.add(new_analyst)
         return new_analyst
+
 
 def analyst_login(analyst_email: str, password: str, uow: AbstractUnitOfWork) -> None:
     with uow:
@@ -120,7 +115,6 @@ def add_bot(
 
     risk_appetite = RiskAppetite[risk_appetite]
 
-    
     new_bot = Bot(
         id=str(uuid4()),
         analyst_id=analyst_id,
@@ -135,6 +129,8 @@ def add_bot(
         uow.bots.add(new_bot)
 
     return new_bot
+
+
 def initiate_bot_execution(
     bot_id: str,
     uow: AbstractUnitOfWork,
@@ -166,22 +162,86 @@ def handle_execution(uow: AbstractUnitOfWork):
 
         # Remove duplicate values
         stocks_ticker_list = list(set(stocks_ticker_list))
-        stock_prices = {}
 
         # Fetch the last close price from api for all the stocks
+        stock_prices = {}
         for stock_ticker in stocks_ticker_list:
-            timestamp = int(datetime.now().timestamp())
-           
-            p, t = get_last_close_price(stock_ticker=stock_ticker, timestamp=timestamp)
+            p, t = get_close_price(stock_ticker=stock_ticker)
             print("Price", p, "Timestamp", t)
             stock_prices[stock_ticker] = p, t
+
+        predictions = {}
+        # Fetch the predictions for all the bots
+        for stock_ticker in stocks_ticker_list:
+            Open, High, Low, Close, ATR = predict(
+                f"../../../ML/{stock_ticker}.h5",
+                stock_ticker,
+            )
+            predictions[stock_ticker] = {
+                "open": Open,
+                "high": High,
+                "low": Low,
+                "close": Close,
+                "atr": ATR,
+            }
 
         for bot in fetch_all_running_bots:
             bot.handle_execution(
                 price=stock_prices[bot.stocks_ticker][0],
                 timestamp=stock_prices[bot.stocks_ticker][1],
+                prediction=predictions[bot.stocks_ticker],
             )
             uow.bots.save(bot)
+
+
+# trigger bot execution after every n minutes
+def simulate_execution(
+    uow: AbstractUnitOfWork,
+    start_timestamp: int,
+    end_timestamp: int,
+):
+    with uow:
+        # get all bots in running state
+        fetch_all_running_bots = uow.bots.get_all_running_bots()
+        stocks_ticker_list = [b.stocks_ticker for b in fetch_all_running_bots]
+
+        # Remove duplicate values
+        stocks_ticker_list = list(set(stocks_ticker_list))
+
+        ts = start_timestamp
+        while ts <= end_timestamp:
+            # Fetch the predictions for all the bots
+            predictions = {}
+            for stock_ticker in stocks_ticker_list:
+                Open, High, Low, Close, ATR = predict(
+                    f"../../../ML/{stock_ticker}.h5",
+                    stock_ticker,
+                    till=date.fromtimestamp(ts),
+                )
+                predictions[stock_ticker] = {
+                    "open": Open,
+                    "high": High,
+                    "low": Low,
+                    "close": Close,
+                    "atr": ATR,
+                }
+
+            # Fetch the last close price from api for all the stocks
+            stock_prices = {}
+            for stock_ticker in stocks_ticker_list:
+                p, t = get_close_price(stock_ticker=stock_ticker, timestamp=ts)
+                stock_prices[stock_ticker] = p, t
+
+            for bot in fetch_all_running_bots:
+                bot.handle_execution(
+                    price=stock_prices[bot.stocks_ticker][0],
+                    timestamp=stock_prices[bot.stocks_ticker][1],
+                    prediction=predictions[bot.stocks_ticker],
+                )
+                uow.bots.save(bot)
+
+            # Go forward one day
+            ts += 86400
 
 
 def add_trade(
@@ -196,9 +256,11 @@ def add_trade(
         fetched_bot.add_trade(price=price, quantity=quantity, timestamp=timestamp)
         uow.bots.save(fetched_bot)
 
+
 """
 ML module
 """
+
 
 def train_model(ticker: str) -> None:
     model = TrainModel(ticker)

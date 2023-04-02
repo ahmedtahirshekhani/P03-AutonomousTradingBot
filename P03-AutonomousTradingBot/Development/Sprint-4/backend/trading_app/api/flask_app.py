@@ -156,18 +156,18 @@ def add_bot():
     analyst = queries.get_analyst(analyst_email, uow=unit_of_work.UnitOfWork())
     analyst_id = analyst.id
 
-    commands.add_bot(
+    new_bot = commands.add_bot(
         analyst_id,
         request.json["investor_id"],
-        "ENGRO",
-        0.0,
+        request.json["stock_ticker"],
+        request.json["balance"],
         request.json["risk_appetite"],
         request.json["target_return"],
         uow=unit_of_work.UnitOfWork(),
     )
 
-    retObj = {"success": True, "message": "Bot added successfully!"}
-    return jsonify(retObj), 200
+    ret = successMessage(message="Bot added successfully!", data=new_bot)
+    return ret, 200
 
 
 @app.route(prefix + "/get-bots", methods=["POST"])
@@ -228,10 +228,29 @@ def terminate_bot():
 
 @app.route(prefix + "/handle-execution", methods=["PUT"])
 def handle_execution():
-    try:
-        bots = commands.handle_execution(uow=unit_of_work.UnitOfWork())
-    except Exception as e:
-        return jsonify({"success": False, "message": str(e)}), 400
+    bots = commands.handle_execution(uow=unit_of_work.UnitOfWork())
+
+    retObj = {
+        "success": True,
+        "message": "Bot execution handled successfully!",
+        "bots": bots,
+    }
+    return jsonify(retObj), 200
+
+
+@app.route(prefix + "/simulate-execution", methods=["PUT"])
+def simulate_execution():
+    if request.json is None:
+        msg = "payload missing in request"
+        return jsonify({"success": False, "message": msg}), 400
+
+    start_timestamp = request.json["from"]
+    end_timestamp = request.json["to"]
+    bots = commands.simulate_execution(
+        uow=unit_of_work.UnitOfWork(),
+        start_timestamp=start_timestamp,
+        end_timestamp=end_timestamp,
+    )
 
     retObj = {
         "success": True,
@@ -277,19 +296,21 @@ def get_stock_details():
         ret = successMessage("Stock details fetched successfully!", predictions)
         status = 200
     except Exception as e:
+        print(e)
         ret = errorMessage(str(e))
         status = 400
 
     return ret, status
+
 
 @app.route(prefix + "/train-model", methods=["GET"])
 def train_model():
     if request.json is None:
         msg = "payload missing in request"
         return jsonify({"success": False, "message": msg}), 400
-    
+
     try:
-        ticker = request.json['ticker']
+        ticker = request.json["ticker"]
         commands.train_model(ticker=ticker)
 
         ret = successMessage("Model trained successfully!", {})
@@ -299,6 +320,7 @@ def train_model():
         status = 400
 
     return ret, status
+
 
 # get all stock details using ticker
 @app.route(prefix + "/stocks", methods=["GET"])
@@ -331,3 +353,20 @@ def get_bot():
     )
 
     return successMessage(message="Bot successfully fetched!", data=fetched_bot), 200
+
+
+@app.route(prefix + "/get-stock-tickers", methods=["GET"])
+def get_stock_tickers():
+
+    stock_tickers = queries.get_all_stock_tickers()
+
+    return (
+        successMessage(
+            message="Tickers successfully fetched!",
+            data={
+                "stock_tickers": list(stock_tickers["symbol"]),
+                "names": list(stock_tickers["name"]),
+            },
+        ),
+        200,
+    )
