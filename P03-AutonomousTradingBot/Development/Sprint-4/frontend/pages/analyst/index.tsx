@@ -29,8 +29,15 @@ const AnalystDashboard: NextPage = () => {
 								Show Stocks
 							</button>
 						</Link>
+
+						<div className='h-4'></div>
+
+						<Link href='/analyst/show-trained-stocks'>
+							<button className='btn btn-primary'>
+								Show Trained Stocks
+							</button>
+						</Link>
 					</div>
-					
 				</div>
 			</div>
 		</AnalystLayout>
