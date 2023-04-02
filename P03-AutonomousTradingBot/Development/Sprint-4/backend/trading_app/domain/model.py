@@ -240,7 +240,11 @@ class Bot:
         """
 
         ENTRY_STRENGTH = 1
-        EXIT_STRENGTH = 1
+        EXIT_STRENGTH = 0.2
+
+        print("")
+        print("Price:", price)
+        print("Predicted price:", prediction["close"])
 
         strength = abs(prediction["close"] - price) / prediction["atr"]
         up_trend = True if prediction["close"] - price > 0 else False
@@ -277,6 +281,9 @@ class Bot:
                     should_close_trade = True
 
             print("Should close trade?", should_close_trade, strength)
+            print("Up trend?", up_trend)
+            print("Strength:", strength)
+            print("Trade type:", self.trades[-1].trade_type)
 
             if should_close_trade:
                 self.close_trade(timestamp=timestamp, price=price)

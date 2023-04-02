@@ -370,3 +370,17 @@ def get_stock_tickers():
         ),
         200,
     )
+
+
+@app.route(prefix + "/get-trained-stock-tickers", methods=["GET"])
+def get_trained_stock_tickers():
+
+    trained_stock_tickers = queries.get_trained_stock_tickers()
+
+    return (
+        successMessage(
+            message="Trained tickers successfully fetched!",
+            data={"trained_stock_tickers": trained_stock_tickers},
+        ),
+        200,
+    )

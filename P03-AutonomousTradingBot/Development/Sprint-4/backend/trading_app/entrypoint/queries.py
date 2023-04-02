@@ -1,5 +1,6 @@
 from .unit_of_work import UnitOfWork
 from ..domain.model import Bot, Analyst
+import os
 
 
 import requests
@@ -106,6 +107,22 @@ def get_close_price(
 
 def get_all_stock_tickers():
     return psx.tickers()
+
+
+def get_trained_stock_tickers():
+
+    # specify the directory path
+    path = "../../../ML"
+
+    # get all files in the directory
+    files = [
+        f
+        for f in os.listdir(path)
+        if os.path.isfile(os.path.join(path, f)) and ".h5" in f
+    ]
+    files = [f.replace(".h5", "") for f in files]
+
+    return files
 
 
 """
