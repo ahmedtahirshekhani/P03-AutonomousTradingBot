@@ -68,7 +68,7 @@ const Home: NextPage = () => {
                   <li onClick={() => setRisk("LOW")}>
                     <a>Low Risk - 5%</a>
                   </li>
-                  <li onClick={() => setRisk("MEDIUM")}>
+                  <li onClick={() => setRisk("MID")}>
                     <a>Medium Risk - 10%</a>
                   </li>
                   <li onClick={() => setRisk("HIGH")}>

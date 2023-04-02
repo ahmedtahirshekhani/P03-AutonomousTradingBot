@@ -1,96 +1,64 @@
 import type { NextPage } from "next";
+import { useState, useEffect } from "react";
 import Stocks from "../../components/cards/stocks";
-import stockdata from "../../components/cards/stockdetails.json";
-import { error } from "console";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import AnalystLayout from "../../components/layouts/AnalystLayout";
 
-interface Stockdata {
-  [key: string]: any;
-}
-
 const ShowStocks: NextPage = () => {
-  // const result = Object.keys(stockdata).map((key) => {
-  //   return { [key]: stockdata[key as keyof typeof stockdata] };
-  // });
+  const [stocks, setStocks] = useState([]);
 
-  // //console.log(result)
-  // Object.entries(stockdata.data).forEach(
-  //   ([key, value]) => console.log(key,value)
-
-  // );
-
-  const stocks = [
-    {
-      name: "HBL",
-      imageUrl:"https://i.dawn.com/large/2021/04/607fca622a621.jpg",
-	  description: "Habib Bank Limited",
-    },
-    {
-      name: "ENGRO",
-      imageUrl:
-        "data:image/png;base64,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",
-      description: "Engro Corporation Limited",
-    },
-    {
-      name: "SYSTEM",
-      imageUrl:
-        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxQHEQ8QERITEhISEQ8VFRYVFRYQFhUVFRYWFhoWGhUYHSgiGRsmGxUVIjYmJSorLy4vGB8zODMsNygtLi0BCgoKDg0OFxAQGi0fHR8tKysrLS0tKy0tLS4tKy0tKy0tKystLS8tKy0rLS0tLS0tOC04Ky0rLSstKy0rNystLf/AABEIAOEA4QMBIgACEQEDEQH/xAAbAAEAAgMBAQAAAAAAAAAAAAAAAQIDBQYHBP/EAEcQAAIBAgQCBwUDBQ8FAQAAAAABAgMRBAUSIQYxBxNBUXGBkSIyYaGxFHOSNEJicrIVFkVSVIKDhJOiwcLD0dIjRGPh8Rf/xAAXAQEBAQEAAAAAAAAAAAAAAAAAAQID/8QAIxEBAQACAgICAQUAAAAAAAAAAAECESExEkETUQMUIjJCcf/aAAwDAQACEQMRAD8A9ujHYnShHkWJFV0oaUWBUV0oaUWAFdKGlFgBXShpRYAV0oaUWAFdKGlFgBXShpRYAV0oaUWAFdKGlFgBXShpRYAV0oaUWAFdKGlFgBXShpRYhgYAAZ02zR5FiseRYsYAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhkkMDAADLozR5FiseRYscwAFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIZJDAwAAy6M0eRYrHkWLHMABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAACGSQwMAAMujNHkWKx5FixzAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhkkMDAADLozR5FiseRjxWKhhIudScYRXOUmor1ZqOdZgc9PjXBQduvT8ITa9VE2OXZ3h8z2o1oTf8VO0vwvcuhsAa3EZ9hsNN054ilGcXZxckmn4eaNkQADX4nO8PhJunUr0oTVrxlJJq+62A2APmxuYUsBHXVqRpx75NRv8ABd7NO+NsEnbr/PRUt66RodCY69aOHjKc5KMYq7lJ2SXe2z58vzSjmSbo1YVEuel3a8VzRqOOMdTo4TEUpVIxqTpS0RbSlLdcl2l0PuyfP6OczqxotzVLTeVrReq/K+7919htTzLoyx9PA/autqQhq6m2ppXtrv8AVHoGEzOljW1TqQm0rtRadl3kyuMy8drMcvHy1w+0HyY7MaWXx1Vqkaa75NK/gu3yNTHjXBSduvXi4TS9dJdI6EGHDYqGLip05xnF8pRakn5oxZlmNPLIOpWmoR5Xfa+5Lm3s9kQfWDXZdnNLH0FiVLRSbnvO0NoycbvfbkfBPjTBQlp+0LxUZteqjYuh0APmwWOp46KnSnGpF9sXdeHwZ8eZcR4bK3pq1oxl/FV5yXjGKbXmQbUGmwHFOEzCSjTrw1PkpXpt/Bakrm4uBINfmWdUMst11aFNvkm/af8ANW5rqfGuCm7del4wnFeriXVNuhIZiwmLhjIqdOcZxfKUWpL1RlZBgABl0Zo8jyHPMTU4ox/UKVo9dKlTT92Ki2nK3e7N/I9ejyPKeLeHK+VYieJoqTpyqOopQTcqcm9TulySd9+R0wcsnR0ujfDqNpVa0pd6cIq/hpf1OT4q4dnwtOlVp1G4OT0T92cJreza+Hau57Gzy3pIq00lWpRq/pQfVt+W6b8LHR4DjfB5laNS9J/+WK03/WV0vOxreU7TiuJ4sX7o0cJmFt68HTq25dbTbV/NJ/hPSOEMx/dTCUKjd5KOif60PZb87J+ZXifK45pg6tKCV9Ouna3vx9pWt38vM5HoqzLROvhnyklVh4q0Zeq0/hZO8f8ADqvR6k1TTk3ZJNt9yR5FkUf3w5lKvNXgpzry+EIe7H9hHddIOY/YMFUSdpVmqS/nJuX91SNb0ZZV1OHqV5Leu7L7uF185OXohOJat7chhKdTjTG2nPTq1Su91Tpr82MfNLzudkujfDWt1lfV36oW9NJyGaZNieE63W09WiDbhVitUdPdPu22afM3WX9JUkkq9BS/Spy0/wB2V/qau/6szXtos5y6rwbiqbhUu7a6c/d1JOzjJfJr4o6zjLLI55hYY9TcVDDKcY2Tup2lu+zmbTLeLsHm8oxb0ze0Y1YpbvsUt18z6+L0o4DFJKy6p7crcjO7uLp57wRkCzzr7zcOr6vkk76tX+x2iw9PgvDVqt9cm1a+zlLlGO3Ze79TSdEv/ef0H+oZOliu4wwtPslOpJ+MVFL9tnO/gw+Xz1y7fqPyfF8e/wBv00eS5NX4zq1K9ao1BO0p2v8AHRTjyVl6X7bnS1ujbDuNoVa0ZdjbhNX+MdK+poeHuN45Lh6dBYfVp1Ny16dTlJu9tPxS8jZf/pq/kr/tV/xOt8vThNNFgsTX4IxeipvTbi5xV3GpBu2uP6S39Gjqek+aqYOhJO6lXg012p06jTOR4t4kjxF1LVHq5U9avq13Urbcl3fM2md4h4nJcA3zVZQ/AqsV8ki66pvt8HDuWV+J408Pr0YbD3bdrrVKTly/Onu/BL479Riejeg4NU6tVTts5OMo3+MVFbeZ9fRlBRwSaW8qtVv42aX0SOsZm5WXhZHh+XZhiMjqV6VJuNSeqjJLf2lK14/pJ3s/idllfRzCUVLFVajqS3ag0km++Uk3J/HY0DipZzbs+3f57nrpcsiR5LxpwishjCrSnKdKUtLU7aoys2t0ldOz7Dosl4jnTymrXb1VaDlSTe937Kg332U4+Nj7ukv8hl97S+pqOCMuWbZZi6Ddtdeok+dpKFJp+qRN7nJ7aDhXh98U1K1SrVklFxc5e9OcpX7Xy93n4HV4jo3w8otQq1oy7HJwmr/FaV9TjqNXF8GVW9LhfZ6lqpVEuW/J+TTVzpsD0lxduuoSXxpyUv7srfU1d+kmvbnskxNThXMFRnLbrIU6iT9mUZ2tO3hJSXmu89hNJlOe4TO5f9NxdS19M46Z7ePO3wubsxldtRgABl1Zo8jQ5Pxdh83qqjT6xTak1qjp5btc+Zvo8jyvijh+vkeIlisOpOnrdSMoK7pN7tSX8Xd78rbMuMlcq9Gx2SYfH3dWhSm32uC1fiW/zOD424OpZZRliaDcYxcFKm3qVpSUU4t785LZ3KYXpKqwSU6FOb74zdO/lZmvzXiLFcW2oU6Xs3T0U05ttcnKT7F5I3JZUtjqei7GyxGHq0pNtUppQv2Rkr6fBNP1Obzin+9fNFUW1NzVVfqVLqa+c16Hd8GZE8hoaJNOpOWuduSdklFPtsl82anpPyv7Th4YiK9qjL2vu52T9JafmSWeRrhpukXEvNMXh8JTd9Kitt/brNfSOl+bPQIKGS4dLfq6FLsV3phHu7XseddHGBlmOKniJ3l1EFZve85LRH0ipfI9Qq0lVTi91JNNd6asxlxqLPtqMi4moZ7KcKLlqjFSeqOnZu23f/7MuO4dwuOv1lCm2+bUVCX4o2Z5rmGVYng6v11LV1ab0VEtUXB/mTXZ5910bOl0mVFG0sPTb71UcV6Wf1Hj9Jv7fHxzwpDI1CrRk+rnPQ4S3cW02rPtVovn/wDN3gcdPHZJXc25ShCrTu921Fq134NLyObx2PxfGtSEI07xi9owTUIN7apTfbb/ABsjvocPfZctng4PVN0qivyvUleXkr7eFi3qbSduf6Jf+8/oP9Q+jpWwrnRoVUvcqSi/gpr/AHivU4/J84xHCs6iVPS52Uo1YSXu3s1uu9nf5FWqcW4St9qhCNOpeMNCafs/n+03yla36rF4uyczT5+BMDhsywdNyoUJ1IOcJuVOEpX1Nq7au/ZcTof3v4X+S4f+xp/8TzKdHGcEVpSj7j21WcqVRLle3uv0a+u0fSZUcbfZ6erv6xtfhtf5kuN9Lt0OfVMuyF01WwtG9RSaUaFOTsrbvbbmanjyVOpl2FlRgqdKdaEoxUVTSUoVH7q2V738zS5blOJ4yrqvX1Kk7ap20x0r8ymu3x3tdts6XpPpqlg6EYqyjXgklySVOokiziw7j7OjT8hh95W/aOqZyvRr+Qw+8rftHVMxl3VnTyL+Gv67/mPXEeR/w1/Xf8x64jWfojlukv8AIZfe0fqajgTNqeTZfWrVdWj7XKPsrU7unTtsbfpL/IZfe0vqabgjLFnGWYqhJ214idnztJQpOL8mkJ/FPbsMmzeln9KU6V3BScGpxtukny8Gj5sdwlhMbfVQhFvtprqn4+zZPzPOMLisXwTVknCyk91JOVKpbk4yXb4b96NxLpNnayw8E+/rG16af8R430b+2i4pyZ8M4mCp1JNNRqU5cpRs2t7dqa5nrmU4l43D0Kr2dSjSm/GUVJ/U8sw2AxXGtdVZpqDsnUtphCC/Nhf3nu+/d7nrWHorDwhCKtGEYxS7lFWS9EMzFQAHPTrtmjyLFY8ixYw+argadZ3lThJ97hFv5ozU6ap7RSS7krIuAIckmldXfI4TpPzlU6UcJGS1TkpVEuyEd0n3XlZ/zWbjjbIamfUqUKUoRlCpr9ttL3Wtmk7Pc0GR9HkqVRVMVOEoxd9ENUlJ/pSklt8Lbmsdd1Lt0PAeV/uXg6akrTq/9SXw1JWXlFR+Z0RCViTNu1Q1c+eWX0pO7pU2+9wi362PpAFYQUFZbLu5FgAIFiQBDWo+dYCknfqqd+/RG/rY+kAQthYkARYkACLEgAQ0ErEgCs4qezV13PdGCOX0ou6pU0+9Qin62PpAEJWDJIYGAAGXRmjyLFY8ixY5gAKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQySGBgABl0Zo8ixWPIsWOYACgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEMkhgYAAZdGaPIsVjyLFjmAAoAAAAAAAAAAAAAAAAAAAAAAAAAAAAABDJIYGAAGXRmjyLFY8ixY5gAKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQySGBgABl0Zo8ixWPIk1HNIIuLgSCLi4Egi4uBIIuLgSCLi4Egi4uBIIuLgSCLi4Egi4uBIIuLgSCLi4Egi4uBJDFwBgAsSZb2rH/YkAQgAAoAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgBKxAAyr/2Q==",
-      description: "Systems Limited",
-    },
-    {
-      name: "SILK BANK",
-      imageUrl:"data:image/jpeg;base64,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",
-	  description: "Silk Bank Limited",
-    },
-  ];
-
-  // const returnStockList = (stocks: any) => {
-  // 	let temp: any[] = [];
-  // 	let data = stocks['data'];
-  // 	let keys = Object.keys(data);
-  // 	keys.forEach((k: any, i: number) => {
-  // 		temp.push(<Stocks items={data[k]} key={i} />);
-  // 	});
-
-  // 	return temp;
-  // };
+  useEffect(() => {
+    fetch("/api/v1/get-stock-tickers")
+      .then((response) => response.json())
+      .then((data) => {
+        setStocks(data.data.names);
+      })
+      .catch((error) => {
+        console.error("Error fetching stock data:", error);
+      });
+  }, []);
 
   const returnStockList = (stocks: any) => {
+    const numberOfRows = Math.ceil(stocks.length / 5);
+  
     return (
-		
-      <div className="flex">
-        {stocks.map((stock: any, index: number) => (
-          <Stocks
-            key={index}
-            items={{
-              title: stock.name,
-              imageUrl: stock.imageUrl,
-              description: stock.description,
-            }}
-          />
+      <div>
+        {Array.from({ length: numberOfRows }).map((_, rowIndex) => (
+          <div key={rowIndex} className="flex flex-row justify-center mb-4">
+            {stocks.slice(rowIndex * 5, rowIndex * 5 + 5).map((stock: string, index: number) => (
+              <Stocks
+                key={index}
+                items={{
+                  title: stock,
+                }}
+              />
+            ))}
+          </div>
         ))}
       </div>
     );
   };
+  
 
   return (
-	<AnalystLayout>
-    <div className="hero min-h-screen bg-base-200">
-      <div className="hero-content text-center">
-        <div className="max-w-md">
-          <h1 className="text-5xl font-bold">Available Stocks</h1>
-          <div className="flex flex-wrap justify-center">
-            {returnStockList(stocks)}
+    <AnalystLayout>
+      <div className="hero min-h-screen bg-base-200">
+        <div className="hero-content text-center">
+          <div className="max-w-md">
+            <h1 className="text-5xl font-bold text-primary">Available Stocks</h1>
+            <div className="flex flex-wrap justify-center">
+              {returnStockList(stocks)}
+            </div>
+            <Link href="/analyst">
+              <button className="btn btn-wide btn-primary">
+                <h1>Back to Main Page</h1>
+              </button>
+            </Link>
           </div>
-		  <Link href="/analyst">
-		  <button className="btn btn-wide btn-primary">
-			<h1>Back to Main Page</h1></button></Link>
         </div>
       </div>
-    </div>
-	</AnalystLayout>
+    </AnalystLayout>
   );
 };
 

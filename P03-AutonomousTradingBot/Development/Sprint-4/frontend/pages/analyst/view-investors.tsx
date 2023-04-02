@@ -25,7 +25,7 @@ const ViewInvestors: NextPage = () => {
 			<div className='hero min-h-screen'>
 				<div className='hero-content text-center'>
 					<div className='max-w-xl'>
-						<h1 className='text-5xl font-bold'>Investors</h1>
+						<h1 className='text-5xl font-bold text-primary'>Investors</h1>
 
 						<p className='py-6'></p>
 						<div className=''>
