@@ -111,7 +111,7 @@ const TradeTable: React.FC<TradeTableProps> = ({ trades }) => {
                   ))}
                 </tbody>
               </table><div className="text-center text-xl py-8">
-                  <Link href="../analyst">
+                  <Link href="../graph">
                     <button className="btn btn-wide btn-primary"><h1>
                       View Graph</h1>
                     </button></Link>
