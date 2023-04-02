@@ -249,7 +249,6 @@ class Bot:
         ) * 100
 
         # pass string to enum to get enum value
-        self.state = BotState.RUNNING
         if self.state != BotState.RUNNING:
             raise Exception("Bot is not in running state")
 

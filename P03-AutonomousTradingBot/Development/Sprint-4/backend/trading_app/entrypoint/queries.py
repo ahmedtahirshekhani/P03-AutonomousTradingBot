@@ -101,7 +101,7 @@ def get_close_price(
 
     print("Last close price:", close_price, current_date.timestamp())
 
-    return close_price, current_date.timestamp()
+    return close_price, int(current_date.timestamp())
 
 
 def get_all_stock_tickers():
