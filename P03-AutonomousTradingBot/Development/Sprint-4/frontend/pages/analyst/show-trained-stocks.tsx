@@ -37,7 +37,7 @@ const ShowStocks: NextPage = () => {
 				<div className='hero-content text-center'>
 					<div className='max-w-lg'>
 						<h1 className='text-5xl font-bold text-primary'>
-							Trained stock tickers
+							Trained Stock Tickers
 						</h1>
 						<div className='flex flex-wrap justify-center'>
 							{stocks?.map((s) => (
