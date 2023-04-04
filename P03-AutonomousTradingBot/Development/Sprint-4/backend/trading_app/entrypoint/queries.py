@@ -1,5 +1,5 @@
 from .unit_of_work import UnitOfWork
-from ..domain.model import Bot, Analyst
+from ..domain.model import Bot, Analyst, Investor
 import os
 
 
@@ -16,6 +16,12 @@ def get_analyst(analyst_email: str, uow: UnitOfWork) -> Analyst:
     with uow:
         fetched_analyst = uow.analysts.get(analyst_email=analyst_email)
         return fetched_analyst
+def get_investor(investor_email: str, uow: UnitOfWork) -> Investor:
+    with uow:
+        fetched_investor = uow.investors.get(investor_email=investor_email)
+        print(fetched_investor)
+        return fetched_investor
+
 
 
 def investor_bots(analyst_id: str, investor_id: str, uow: UnitOfWork):

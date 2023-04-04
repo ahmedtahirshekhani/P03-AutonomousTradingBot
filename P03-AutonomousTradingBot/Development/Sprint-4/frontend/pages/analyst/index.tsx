@@ -6,7 +6,6 @@ import AnalystLayout from '../../components/layouts/AnalystLayout';
 
 const AnalystDashboard: NextPage = () => {
   const router = useRouter();
-  const isAnalyst = router.pathname.includes('/analyst');
 
 
 
@@ -16,7 +15,6 @@ const AnalystDashboard: NextPage = () => {
       <div className='hero min-h-screen bg-base-200'>
         <div className='hero-content text-center'>
           <div className='max-w-md flex flex-col'>
-            {isAnalyst ? (
               <>
                 <Link href='/analyst/view-investors'>
                   <button className='btn btn-primary'>
@@ -48,13 +46,7 @@ const AnalystDashboard: NextPage = () => {
                   </button>
                 </Link>
               </>
-            ) : (
-              <Link href='/analyst/view-investors'>
-                <button className='btn btn-primary'>
-                  View Investors
-                </button>
-              </Link>
-            )}
+
           </div>
         </div>
       </div>
