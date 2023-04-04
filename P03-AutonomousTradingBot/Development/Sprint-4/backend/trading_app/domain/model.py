@@ -184,7 +184,6 @@ class Bot:
         self.state = BotState.TERMINATED
 
     def close_trade(self, timestamp: int, price: float):
-        print("Closing trade")
         self.in_trade = False
         last_trade = self.trades[-1]
 
@@ -206,7 +205,7 @@ class Bot:
             price_diff = sP - eP
             self.current_balance += price_diff
 
-        print("Price diff: ", price_diff, "Self balance: ", self.current_balance)
+       
 
         if price_diff >= 0:
             last_trade.is_profit = True
@@ -242,9 +241,6 @@ class Bot:
         ENTRY_STRENGTH = 1
         EXIT_STRENGTH = 0.2
 
-        print("")
-        print("Price:", price)
-        print("Predicted price:", prediction["close"])
 
         strength = abs(prediction["close"] - price) / prediction["atr"]
         up_trend = True if prediction["close"] - price > 0 else False
@@ -259,18 +255,17 @@ class Bot:
         self.prices[timestamp] = price
 
         should_stop_bot = True if current_return >= self.target_return else False
-        print("Should stop bot?", should_stop_bot, current_return, self.target_return)
 
         if should_stop_bot:
             if self.in_trade:
-                print("Closing trade")
+             
                 self.close_trade(timestamp=timestamp, price=price)
 
             self.state = BotState.FINISHED
             return
 
         if self.in_trade:
-            print("In a trade")
+          
 
             # Exit strategies
             should_close_trade = False
@@ -280,22 +275,18 @@ class Bot:
                 elif self.trades[-1].trade_type == TradeType.PUT and up_trend == True:
                     should_close_trade = True
 
-            print("Should close trade?", should_close_trade, strength)
-            print("Up trend?", up_trend)
-            print("Strength:", strength)
-            print("Trade type:", self.trades[-1].trade_type)
-
+        
             if should_close_trade:
                 self.close_trade(timestamp=timestamp, price=price)
         else:
             # Entry strategies
-            print("Not in a trade")
+      
             should_enter_trade = True if strength > ENTRY_STRENGTH else False
 
-            print("Should enter trade?", should_enter_trade, strength)
+           
 
             if should_enter_trade:
-                print("Entering a new trade")
+             
 
                 self.in_trade = True
                 trade = Trade(
