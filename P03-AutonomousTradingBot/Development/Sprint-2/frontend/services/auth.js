@@ -116,7 +116,6 @@ const getAllBots = async (investor_id) => {
   return response.data;
 };
 
-<<<<<<< HEAD
 const addBot = async (investor_id, risk_appetite, target_return, amount, duration) => {
 	var data = JSON.stringify({
 		investor_id: investor_id,
@@ -139,32 +138,8 @@ const addBot = async (investor_id, risk_appetite, target_return, amount, duratio
 	};
 
 	const response = await axios(config);
-	return response.data;
-=======
-const addBot = async (investor_id, risk_appetite, target_return) => {
-  var data = JSON.stringify({
-    investor_id: investor_id,
-    trades: [],
-    assigned_model: 0,
-    risk_appetite: risk_appetite,
-    target_return: target_return,
-    duration: "10-12-2023",
-  });
+	return response.data;}
 
-  var config = {
-    method: "post",
-    url: "/api/v1/add-bot",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-      "Content-Type": "application/json",
-    },
-    data: data,
-  };
-
-  const response = await axios(config);
-  return response.data;
->>>>>>> main
-};
 
 const initiateBotExecution = async (bot_id) => {
   var data = JSON.stringify({

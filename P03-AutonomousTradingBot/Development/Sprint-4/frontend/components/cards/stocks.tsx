@@ -1,69 +1,91 @@
-import Image from 'next/image';
-
-interface Dictionary {
-	[key: string]: any;
-}
-
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 interface StocksProps {
 	items: {
-	  title: string;
-	  imageUrl: string;
-	  description: string;
+		title: string;
+		ticker: string;
 	};
-  }
-
-// const Stocks = ({ items }: Dictionary) => {
-// 	return (
-// 		<div className="stock-container">
-// 			<div className='card w-96 bg-base-100 shadow-xl'>
-// 				<figure>
-// 					<Image
-// 						src={`${items.results.branding.logo_url}?apiKey=YFTHviueJWslQBln4lPLiSlAch9byi2z`}
-// 						alt="Sorry, we're working on it!"
-// 						width={250}
-// 						height={250}
-// 					/>
-// 					<img />
-// 				</figure>
-// 				<div className='card-body'>
-// 					<h2 className='card-title'>
-// 						{items.results.name}
-// 						<div className='badge badge-secondary'>
-// 							{items.results.ticker}
-// 						</div>
-// 					</h2>
-// 					<p>
-// 						{' '}
-// 						Works in {items.results.sic_description} Visit website
-// 						to learn more.
-// 						<a href={items.results.homepage_url} target='_blank'>
-// 							Here
-// 						</a>
-// 					</p>
-// 					<div className='card-actions justify-end'></div>
-// 				</div>
-// 			</div>
-// 		</div>
-// 	);
-// };
-
+}
 
 const Stocks: React.FC<StocksProps> = ({ items }) => {
-	return (
+	const [isLoading, setIsLoading] = useState(false);
+	const [isTrained, setIsTrained] = useState(false);
+	const [trainedStocks, setTrainedStocks] = useState<string[]>([]);
+
+	useEffect(() => {
+		const fetchTrainedStocks = async () => {
+			try {
+				const response = await axios.get('/api/v1/get-trained-stock-tickers');
+				if (response.data && response.data.data && Array.isArray(response.data.data.trained_stock_tickers)) {
+					setTrainedStocks(response.data.data.trained_stock_tickers);
+				} else {
+					setTrainedStocks([]);
+				}
+			} catch (error) {
+				console.error(error);
+				setTrainedStocks([]);
+			}
+		};
 		
-		<div className="card shadow-md w-80 h-80 p-4 m-4">
-		<div className="card-body">
-		  <div className="flex flex-row justify-between items-center">
-			<h2 className="card-title">{items.title}</h2>
-			<img className="w-30 h-20" src={items.imageUrl} alt={items.title} />
-		  </div>
-		  <p className="mt-2">{items.description}</p>
+
+		
+	
+		fetchTrainedStocks();
+	}, []);
+	
+	useEffect(() => {
+		setIsTrained(trainedStocks.includes(items.ticker));
+	}, [trainedStocks, items.ticker]);
+	
+	const trainModel = async () => {
+		setIsLoading(true);
+	
+		const config = {
+			method: 'get',
+			url: '/api/v1/train-model',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			params: {
+				ticker: items.ticker,
+			},
+		};
+	
+		try {
+			await axios(config);
+	
+			console.log('Training successful!');
+			setIsTrained(true);
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+	
+	return (
+		<div className='card shadow-md w-70 h-60 p-4 m-2'>
+
+			<div className='card-body'>
+				<h2 className='card-title'>{items.title}</h2>
+				<div className='flex flex-row justify-between items-center mt-4'>
+					{!isTrained ? (
+						<button
+							className='btn btn-wide btn-primary'
+							onClick={trainModel}
+							disabled={isLoading}
+						>
+							{isLoading ? 'Training...' : 'Train'}
+						</button>
+					) : (
+						<span className='text-primary text-xl px-6'>Trained Successfully</span>
+					)}
+				</div>
+			</div>
 		</div>
-	  </div>
 	);
-  };
-
-
+	
+};
 
 export default Stocks;

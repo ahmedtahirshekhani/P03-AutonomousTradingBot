@@ -21,7 +21,7 @@ const login = (email, password) => {
       .then((res) => {
         localStorage.setItem("access_token", res.data.access_token);
         localStorage.setItem("expires_in", res.data.expires_in);
-        localStorage.setItem("role", res.data.role);
+        localStorage.setItem("role", 'investor');
         resolve(res);
       })
       .catch((err) => {
@@ -37,8 +37,7 @@ const registerInvestor = async (ntn, inv_email, name, phone, address) => {
     address: address,
     investor_email: inv_email,
     phone_number: phone,
-    analyst_email: "",
-    ntn: ntn,
+    ntn_number: ntn,
   });
 
   var config = {
@@ -98,9 +97,17 @@ const getAllInvestors = async () => {
 };
 
 const getAllBots = async (investor_id) => {
-  var data = JSON.stringify({
+  const role = localStorage.getItem("role")
+  let data = {
     investor_id: investor_id,
-  });
+  }
+  if(role == "investor"){
+    data["role"] = role
+  }
+
+  data = JSON.stringify(data);
+
+  
 
   var config = {
     method: "post",
@@ -121,16 +128,14 @@ const addBot = async (
   risk_appetite,
   target_return,
   amount,
-  duration
+  stock_ticker
 ) => {
   var data = JSON.stringify({
     investor_id: investor_id,
-    trades: [],
-    assigned_model: 0,
+    stock_ticker: stock_ticker,
+    balance : amount,
     risk_appetite: risk_appetite,
     target_return: target_return,
-    duration: "10-12-2023",
-    amount: amount,
   });
 
   var config = {

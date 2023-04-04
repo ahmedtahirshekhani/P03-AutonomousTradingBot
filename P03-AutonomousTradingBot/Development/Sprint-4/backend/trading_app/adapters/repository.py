@@ -126,6 +126,7 @@ class FakeInvestorRepository(InvestorAbstractRepository):
         self.investors[investor.id] = investor
 
     def get(self, investor_email: str) -> Investor:
+        print("Here2")
         for analyst in self.investors.values():
             if analyst.email == investor_email:
                 return analyst
@@ -163,6 +164,7 @@ class InvestorRepository(InvestorAbstractRepository):
         )
 
     def get(self, investor_email: str) -> Investor:
+        print("Here")
         sql = """
             select id, name, address, email, phone_number, hashed_password, ntn_number
             from investors
