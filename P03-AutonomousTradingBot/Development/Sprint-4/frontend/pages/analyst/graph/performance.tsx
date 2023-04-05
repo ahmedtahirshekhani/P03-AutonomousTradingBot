@@ -1,85 +1,125 @@
-import { NextPage } from "next";
-import AnalystLayout from "../../../components/layouts/AnalystLayout";
+import axios from 'axios';
+import { NextPage } from 'next';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import AnalystLayout from '../../../components/layouts/AnalystLayout';
 
 interface BotPerformance {
-  id: string;
-  initialInvestment: string;
-  currentValue: string;
-  profit: boolean;
-  percent: string;
-  gain: string
+	id: string;
+	initialInvestment: string;
+	currentValue: string;
+	profit: boolean;
+	percent: string;
+	gain: string;
 }
 
-const APIdata = {
-  "data": {
-    "analyst_id": "3cd03aea-22a4-4d59-9578-0af8f6073f33",
-    "assigned_model": 0,
-    "current_balance": "953.5599999999997",
-    "end_time": "Fri, 31 Dec 9999 18:59:59 GMT",
-    "id": "e16dfe33-4f87-431c-ab40-b9e46583e729",
-    "in_trade": true,
-    "initial_balance": "1000.0",
-    "investor_id": "7385969d-492d-4f18-bcac-e0eb55eaaf5a",
-  },
-  "message": "Bot successfully fetched!",
-  "success": true
-};
+const TradeTable: React.FC<{}> = () => {
+	const router = useRouter();
 
-const botPerformance: BotPerformance = {
-  id: APIdata.data.id,
-  initialInvestment: APIdata.data.initial_balance,
-  currentValue: APIdata.data.current_balance,
-  profit: parseFloat(APIdata.data.current_balance) > parseFloat(APIdata.data.initial_balance),
-  percent: ((parseFloat(APIdata.data.current_balance) - parseFloat(APIdata.data.initial_balance)) / parseFloat(APIdata.data.initial_balance) * 100).toFixed(2) + '%',
-  gain: ((parseFloat(APIdata.data.current_balance) - parseFloat(APIdata.data.initial_balance))).toFixed(2) 
-};
+	const [botPerformance, setBotPerformance] = useState<BotPerformance>();
 
-const trades = []; // Placeholder for trades data
+	useEffect(() => {
+		let data = JSON.stringify({
+			bot_id: router.query.bot_id,
+		});
 
-const TradeTable: React.FC<any> = () => {
-  return (
-    <div className='hero min-h-screen'>
-      <div className='hero-content text-center'>
-        <div className=''>
-          <h1 className='text-5xl font-bold text-primary'>Bot Performance</h1>
+		let config = {
+			method: 'post',
+			maxBodyLength: Infinity,
+			url: '/api/v1/get-bot',
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+				'Content-Type': 'application/json',
+			},
+			data: data,
+		};
 
-          <p className='py-6'></p>
-          <div className=''>
-            <table className='table w-full custom-table'>
-              <thead>
-                <tr className='text-primary'>
-                  <th>ID</th>
-                  <th>Initial Investment(PKR)</th>
-                  <th>Current Value(PKR)</th>
-                  <th>In Profit ?</th>
-                  <th>{botPerformance.profit ? 'Gain (PKR)' : 'Loss(PKR)'} </th>
-                  <th>{botPerformance.profit ? '% Gain' : '% Loss'} </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{botPerformance.id}</td>
-                  <td>{botPerformance.initialInvestment}</td>
-                  <td>{botPerformance.currentValue}</td>
-                  <td>{botPerformance.profit ? 'Yes' : 'No'}</td>
-                  <td>{botPerformance.gain}</td>
-                  <td>{botPerformance.percent}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+		axios
+			.request(config)
+			.then((response) => {
+				const data = response.data;
+				setBotPerformance({
+					id: data.data.id,
+					initialInvestment: data.data.initial_balance,
+					currentValue: data.data.current_balance,
+					profit:
+						parseFloat(data.data.current_balance) >
+						parseFloat(data.data.initial_balance),
+					percent:
+						(
+							((parseFloat(data.data.current_balance) -
+								parseFloat(data.data.initial_balance)) /
+								parseFloat(data.data.initial_balance)) *
+							100
+						).toFixed(2) + '%',
+					gain: (
+						parseFloat(data.data.current_balance) -
+						parseFloat(data.data.initial_balance)
+					).toFixed(2),
+				});
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	}, []);
+
+	return (
+		<div className='hero min-h-screen'>
+			<div className='hero-content text-center'>
+				<div className=''>
+					<h1 className='text-5xl font-bold text-primary'>
+						Bot Performance
+					</h1>
+
+					<p className='py-6'></p>
+					<div className=''>
+						<table className='table w-full custom-table'>
+							<thead>
+								<tr className='text-primary'>
+									<th>ID</th>
+									<th>Initial Investment(PKR)</th>
+									<th>Current Value(PKR)</th>
+									<th>In Profit ?</th>
+									<th>
+										{botPerformance?.profit
+											? 'Gain (PKR)'
+											: 'Loss(PKR)'}{' '}
+									</th>
+									<th>
+										{botPerformance?.profit
+											? '% Gain'
+											: '% Loss'}{' '}
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>{botPerformance?.id}</td>
+									<td>{botPerformance?.initialInvestment}</td>
+									<td>{botPerformance?.currentValue}</td>
+									<td>
+										{botPerformance?.profit ? 'Yes' : 'No'}
+									</td>
+									<td>{botPerformance?.gain}</td>
+									<td>{botPerformance?.percent}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 };
 
 const Home: NextPage = () => {
-  return (
-    <AnalystLayout>
-      <TradeTable />
-    </AnalystLayout>
-  );
+	const router = useRouter();
+
+	return (
+		<AnalystLayout>
+			<TradeTable />
+		</AnalystLayout>
+	);
 };
 
 export default Home;

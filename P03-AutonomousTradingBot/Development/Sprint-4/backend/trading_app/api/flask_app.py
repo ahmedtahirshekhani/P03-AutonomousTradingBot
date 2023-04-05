@@ -108,8 +108,6 @@ def login():
     retObj["token_type"] = "bearer"
     retObj["expires_in"] = 3600
     retObj["role"] = role
-    
-
 
     return jsonify(retObj), 200
 
@@ -179,8 +177,12 @@ def get_bots():
         if request.json["role"] == "investor":
             print("In investor")
             investor_email = get_jwt_identity()
-            investor = queries.get_investor(investor_email, uow=unit_of_work.UnitOfWork())
-            bots = queries.investor_bots("analyst_id", investor.id, uow=unit_of_work.UnitOfWork())
+            investor = queries.get_investor(
+                investor_email, uow=unit_of_work.UnitOfWork()
+            )
+            bots = queries.investor_bots(
+                "analyst_id", investor.id, uow=unit_of_work.UnitOfWork()
+            )
     except:
         if request.json is None:
             msg = "payload missing in request"
@@ -190,7 +192,9 @@ def get_bots():
         analyst = queries.get_analyst(analyst_email, uow=unit_of_work.UnitOfWork())
         analyst_id = analyst.id
         investor_id = request.json["investor_id"]
-        bots = queries.investor_bots(analyst_id, investor_id, uow=unit_of_work.UnitOfWork())
+        bots = queries.investor_bots(
+            analyst_id, investor_id, uow=unit_of_work.UnitOfWork()
+        )
 
     retObj = {"success": True, "bots": bots, "message": "Bots fetched successfully!"}
     return jsonify(retObj), 200
@@ -348,7 +352,7 @@ def get_all_stock_details():
     return ret, status
 
 
-@app.route(prefix + "/get-bot", methods=["GET"])
+@app.route(prefix + "/get-bot", methods=["POST"])
 @jwt_required()
 def get_bot():
 
