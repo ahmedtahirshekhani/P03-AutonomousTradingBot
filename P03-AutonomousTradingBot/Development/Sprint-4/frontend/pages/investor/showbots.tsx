@@ -88,18 +88,7 @@ const Home: NextPage = () => {
                     <div className="card-actions justify-end">
                       <div className="btn-container">
                       <div className="flex justify-end">
-                        <button
-                          onClick={() => handleStartClick(b.id)}
-                          className="btn btn-primary mr-2"
-                        >
-                          Start
-                        </button>
-                        <button
-                          onClick={() => handleTerminateClick(b.id)}
-                          className="btn btn-error mr-2"
-                        >
-                          Terminate
-                        </button>
+                        
                         <Link href="/investor/graph/table">
                           <button className="btn btn-accent">View Trades</button>
                         </Link>

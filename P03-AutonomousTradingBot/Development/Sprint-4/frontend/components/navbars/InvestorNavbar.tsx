@@ -31,9 +31,7 @@ const InvestorNavbar = () => {
 							</svg>
 						</a>
 						<ul className='p-2 bg-base-100'>
-							<li>
-								<a>Settings</a>
-							</li>
+
 							<li>
 								<Link href='/login'>Logout</Link>
 							</li>

@@ -49,7 +49,7 @@ const ShowStocks: NextPage = () => {
 								</div>
 							))}
 						</div>
-						<Link href='/analyst'>
+						<Link href='/investor'>
 							<button className='btn btn-wide btn-primary'>
 								<h1>Back to Main Page</h1>
 							</button>
