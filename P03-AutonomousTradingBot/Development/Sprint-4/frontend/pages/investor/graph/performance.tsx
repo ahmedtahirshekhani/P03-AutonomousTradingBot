@@ -3,6 +3,7 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import AnalystLayout from '../../../components/layouts/AnalystLayout';
+import InvestorLayout from '../../../components/layouts/InvestorLayout';
 
 interface BotPerformance {
 	id: string;
@@ -116,9 +117,9 @@ const Home: NextPage = () => {
 	const router = useRouter();
 
 	return (
-		<AnalystLayout>
+		<InvestorLayout>
 			<TradeTable />
-		</AnalystLayout>
+		</InvestorLayout>
 	);
 };
 

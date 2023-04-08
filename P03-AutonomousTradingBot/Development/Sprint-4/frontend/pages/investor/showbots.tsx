@@ -40,26 +40,7 @@ const Home: NextPage = () => {
     });
   }, [investor_id]);
 
-  const handleStartClick = async (bot_id: string) => {
-    const response = await initiateBotExecution(bot_id);
-    console.log(response)
-    Swal.fire(response.message);
-    setBots((prevBots) =>
-      prevBots.map((bot) =>
-        bot.id === bot_id ? { ...bot, state: "Started" } : bot
-      )
-    );
-  };
 
-  const handleTerminateClick = async (bot_id: string) => {
-    const response = await terminateBot(bot_id);
-    Swal.fire(response.message);
-    setBots((prevBots) =>
-      prevBots.map((bot) =>
-        bot.id === bot_id ? { ...bot, state: "Terminated" } : bot
-      )
-    );
-  };
 
   return (
     <InvestorLayout>
@@ -96,7 +77,7 @@ const Home: NextPage = () => {
                       </div>
                     </div>
                   </div>
-                
+
                 </div>
               ))}
             </div>

@@ -4,6 +4,7 @@ import AnalystLayout from '../../../components/layouts/AnalystLayout';
 import Link from 'next/link';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import InvestorLayout from '../../../components/layouts/InvestorLayout';
 
 interface Trade {
 	id: string;
@@ -147,9 +148,9 @@ const TradeTable: React.FC<TradeTableProps> = () => {
 
 const Home: NextPage = () => {
 	return (
-		<AnalystLayout>
+		<InvestorLayout>
 			<TradeTable />
-		</AnalystLayout>
+		</InvestorLayout>
 	);
 };
 
