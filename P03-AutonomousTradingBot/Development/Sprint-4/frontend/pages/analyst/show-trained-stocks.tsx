@@ -40,8 +40,8 @@ const ShowStocks: NextPage = () => {
 							Trained Stock Tickers
 						</h1>
 						<div className='flex flex-wrap justify-center'>
-							{stocks?.map((s) => (
-								<div className='my-2 card w-96 bg-neutral text-neutral-content'>
+							{stocks?.map((s, k) => (
+								<div key={k} className='my-2 card w-96 bg-neutral text-neutral-content'>
 									<div className='card-body items-center text-center'>
 										<h2 className='card-title'>{s}</h2>
 									</div>
