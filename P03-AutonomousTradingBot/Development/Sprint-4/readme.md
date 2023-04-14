@@ -5,7 +5,7 @@ Syed Talal Hasan - 23100176
 Suleman Mahmood - 23100011
 Ali Asghar - 23100198
 
-SPRINT-2 SUBMISSION GUIDELINES
+SPRINT-4 SUBMISSION GUIDELINES
 
 1. Properly tested working system deployed on an online hosting platform.
 2. Code with readable comments uploaded in “Development/Sprint-2” folder of your project’s Github repository.
